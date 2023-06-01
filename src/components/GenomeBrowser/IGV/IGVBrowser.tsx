@@ -12,9 +12,7 @@ export const DEFAULT_FLANK = 1000;
 interface IGVBrowserProps {
   featureSearchUrl: string;
   genome: string;
-  options?: any;
   locus?: string;
-  trackServerUrl?: string;
   onTrackRemoved?: (track: string) => void;
   onBrowserLoad?: (Browser: any) => void;
 }
@@ -22,7 +20,7 @@ interface IGVBrowserProps {
 export const IGVBrowser: React.FC<IGVBrowserProps> = ({
   featureSearchUrl,
   genome,
-  options,
+  locus,
   onBrowserLoad,
   onTrackRemoved,
 }) => {
@@ -31,15 +29,17 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
       console.log(event);
     });
 
-    options = merge(options ? options : {}, {
-      locus: options.locus || "ABCA7",
+    let options = {
+      locus: locus || "ABCA7",
       showAllChromosomes: false,
       flanking: DEFAULT_FLANK,
       minimumBases: 40,
       search: {
         url: `${featureSearchUrl}$FEATURE$&flank=${DEFAULT_FLANK}`,
       },
-    });
+    }
+
+    // add the reference (genome and gene tracks) to the options
 
     if (!options.hasOwnProperty("tracks")) {
       options = merge(options, { tracks: [] });
