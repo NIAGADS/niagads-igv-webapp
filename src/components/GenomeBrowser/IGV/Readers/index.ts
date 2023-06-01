@@ -1,2 +1,4 @@
-export * from "./GWASServiceReader"
-export * from "./VariantServiceReader"
+import GWASServiceReader from "./GWASServiceReader";
+import VariantServiceReader from "./VariantServiceReader";
+
+export { GWASServiceReader, VariantServiceReader};

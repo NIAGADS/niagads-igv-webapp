@@ -1,45 +1,61 @@
+const HTMLWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
-const webpack = require("webpack");
-
 module.exports = {
   entry: "./src/index.js",
-  mode: "development",
+  output: {
+    path: path.join(__dirname, "/dist"),
+    filename: "bundle.js",
+    publicPath: "/",
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js']
+  },
+  plugins: [
+    new HTMLWebpackPlugin({
+      template: "./src/index.html",
+    }),
+  ],
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: "babel-loader",
-        options: { presets: ["@babel/env"] },
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              ["@babel/preset-env", { targets: "defaults" }],
+              ["@babel/preset-react", { runtime: "automatic" }],
+            ],
+          },
+        },
       },
       {
         test: /\.(ts|tsx)$/,
-        loader: "ts-loader",
-      },
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: [
+                ["@babel/preset-env", { targets: "defaults" }],
+                ["@babel/preset-react", { runtime: "automatic" }],
+              ],
+            },
+          },
+          {
+            loader: "ts-loader",
+            options: {
+              reportFiles: ["./**/*.{ts,tsx}"],
+            },
+          },
+        ],
       },
     ],
   },
-  resolve: { extensions: ["*", ".js", ".jsx"] },
-  output: {
-    path: path.resolve(__dirname, "dist/"),
-    publicPath: "/dist/",
-    filename: "bundle.js",
-  },
   devServer: {
-        // contentBase
-        static : {
-          directory : path.join(__dirname, "public/")
-        },
-        port: 3000,
-        // publicPath
-        devMiddleware:{
-           publicPath: "https://localhost:3000/dist/",
-        },
-        // hotOnly
-        hot: "only",
+    hot: true,
+    port: 3000,
+    open: true,
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
 };

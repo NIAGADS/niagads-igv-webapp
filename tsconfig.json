@@ -6,7 +6,7 @@
     "module": "esnext",
     "allowJs": true,
     "noImplicitAny": true,
-    "removeComments": false,
+    "removeComments": true,
     "preserveConstEnums": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,
@@ -17,6 +17,8 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "baseUrl": "../",
-    "typeRoots": ["./src/ambient_types", "node_modules/@types"]
-  }
+    "typeRoots": ["./src/ambient_types", "node_modules/@types"],
+    "outDir": "dist"
+  },
+  "exclude": ["dist/**/*"]
 }

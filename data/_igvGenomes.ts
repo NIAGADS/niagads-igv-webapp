@@ -46,7 +46,7 @@ export const _genomes = [
                 removable: false,
                 order: 1000000,
                 colorBy: "biotype",
-                color: (feature) => {
+                color: (feature: any) => {
                     const value = feature.geneObject ? feature.geneObject.getAttributeValue("biotype") : feature.getAttributeValue("biotype");
                     if (value === undefined) {
                       return "grey";

@@ -1,4 +1,3 @@
-import {fetchJson} from "@viz/GenomeBrowser";
 import igv from "igv/dist/igv.esm";
 
 interface GWASServiceResponse {
@@ -8,7 +7,7 @@ interface GWASServiceResponse {
     pvalue: number;
 }
 
-export class GWASServiceReader {
+class GWASServiceReader {
     config: any;
     endpoint: string;
     indexed: boolean;
@@ -32,7 +31,6 @@ export class GWASServiceReader {
             withCredentials: this.config.withCredentials,
         }); 
 
-        //const response = await fetchJson(this.endpoint + '?' + queryString);
         if (response && response.data) {
             return response.data.map((entry: GWASServiceResponse) => {
                 const position = parseInt(entry.record_pk.split(":")[1]);
@@ -49,3 +47,5 @@ export class GWASServiceReader {
         }
     }
 }
+
+export default GWASServiceReader;

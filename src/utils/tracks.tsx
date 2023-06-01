@@ -1,5 +1,5 @@
 import get from "lodash.get";
-import { ALWAYS_ON_TRACKS } from "../../data/constants";
+import { ALWAYS_ON_TRACKS } from "../../data/_constants";
 
 export const getTrackID = (trackView: any) => {
     const track = trackView.track;

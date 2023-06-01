@@ -1,5 +1,6 @@
 // modified from https://github.com/igvteam/igv.js/tree/master/js/variant/variantTrack.js
 import igv from "igv/dist/igv.esm";
+import $ from "jquery";
 
 const DEFAULT_POPOVER_WINDOW = 100000000;
 const DEFAULT_VISIBILITY_WINDOW = 1000000;

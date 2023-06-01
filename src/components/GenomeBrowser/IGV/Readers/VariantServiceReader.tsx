@@ -1,6 +1,5 @@
-import {fetchJson} from "@viz/GenomeBrowser";
 import igv from "igv/dist/igv.esm";
-import { VcfInfo } from "@viz/GenomeBrowser/IGV/Tracks/VariantServiceTrack";
+import { VcfInfo } from "../Tracks/VariantServiceTrack";
 
 interface VariantServiceResponse {
    chrom: string;
@@ -12,7 +11,7 @@ interface VariantServiceResponse {
    info: VcfInfo;
 }
 
-export class VariantServiceReader {
+class VariantServiceReader {
     config: any;
     endpoint: string;
     indexed: boolean;
@@ -54,3 +53,5 @@ export class VariantServiceReader {
         }
     }
 }
+
+export default VariantServiceReader;
