@@ -1,0 +1,69 @@
+import React, { useLayoutEffect } from "react";
+import igv from "igv/dist/igv.esm";
+import merge from "lodash.merge";
+import noop from "lodash.noop";
+import { GWASServiceTrack as GWASTrack, VariantServiceTrack as VariantTrack } from "./";
+
+export const DEFAULT_FLANK = 1000;
+
+
+interface IGVBrowserProps {
+    searchServiceUrl: string;
+    options?: any;
+    locus?: string;
+    trackServerUrl?: string;
+    onTrackRemoved?: (track: string) => void;
+    onBrowserLoad?: (Browser: any) => void;
+}
+
+export const IGVBrowser: React.FC<IGVBrowserProps> = ({ searchServiceUrl, options, onBrowserLoad, onTrackRemoved }) => {
+
+    useLayoutEffect(() => {
+        window.addEventListener("ERROR: Genome Browser - ", (event) => {
+            console.log(event);
+        });
+
+        options = merge(options ? options : {}, {
+            locus: options.locus || "ABCA7",
+            showAllChromosomes: false,
+            flanking: DEFAULT_FLANK,
+            minimumBases: 40,
+            search: {
+                url: `${searchServiceUrl}$FEATURE$&flank=${DEFAULT_FLANK}`,
+            },
+        });
+
+        if (!options.hasOwnProperty("tracks")) {
+            options = merge(options, { tracks: [] });
+        }
+
+        const targetDiv = document.getElementById("genome-browser");
+        igv.createBrowser(targetDiv, options).then(function (browser: any) {
+            // browser is initialized and can now be used
+            /* browser.on("locuschange", function (referenceFrameList: any) {
+                let loc = referenceFrameList.map((rf: any) => rf.getLocusString()).join("%20");
+                window.location.replace(HASH_PREFIX + loc);
+            });*/
+
+            // browser.on("trackclick", _customTrackPopup);
+
+            // perform action in encapsulating component if track is removed
+            browser.on("trackremoved", function (track: any) {
+                onTrackRemoved && onTrackRemoved(track.config.id);
+            });
+
+            browser.addTrackToFactory("gwas_service", (config: any, browser: any) => new GWASTrack(config, browser));
+
+            browser.addTrackToFactory(
+                "variant_service",
+                (config: any, browser: any) => new VariantTrack(config, browser)
+            );
+
+            onBrowserLoad ? onBrowserLoad(browser) : noop();
+        });
+    }, [onBrowserLoad]);
+
+    return <span style={{ width: "100%" }} id="genome-browser" />;
+};
+
+export default IGVBrowser;

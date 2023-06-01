@@ -1,0 +1,35 @@
+{
+    "name": "igv-development",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "webpack-dev-server --mode development"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/cli": "^7.1.0",
+        "@babel/core": "^7.1.0",
+        "@babel/preset-env": "^7.1.0",
+        "@babel/preset-react": "^7.0.0",
+        "babel-loader": "^8.0.2",
+        "css-loader": "^1.0.0",
+        "style-loader": "^0.23.0",
+        "@types/lodash.get": "^4.4.7",
+        "@types/lodash.merge": "^4.6.7",
+        "@types/lodash.noop": "^3.0.7",
+        "@types/react-dom": "^18.2.4"
+    },
+    "dependencies": {
+        
+        "igv": "https://github.com/NIAGADS/igv.js.git#NIAGADS-2.13.9",
+        "lodash.get": "^4.4.2",
+        "lodash.merge": "^4.6.2",
+        "lodash.noop": "^3.0.1",
+        "react": "^16.5.2",
+        "react-dom": "^16.5.2",
+        "react-hot-loader": "^4.3.11"
+    }
+}
