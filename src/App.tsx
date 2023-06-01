@@ -1,12 +1,12 @@
 import React, { Component} from "react";
 
 import { IGVBrowser } from "./components/GenomeBrowser/IGV/IGVBrowser"
-import { SERVICE_URL } from "../data/_constants";
+import { FEATURE_SEARCH_ENDPOINT } from "../data/_constants";
 import { config } from "../data/_tracks.js";
 
 const App = () => {
   return (
-    <IGVBrowser featureSearchUrl={SERVICE_URL} genome="hg38_refseq"></IGVBrowser>
+    <IGVBrowser featureSearchUrl={FEATURE_SEARCH_ENDPOINT} genome="hg38_refseq"></IGVBrowser>
   )
 }
 

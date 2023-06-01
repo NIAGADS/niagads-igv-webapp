@@ -7,5 +7,3 @@
 * [webpack-cli](https://www.npmjs.com/package/webpack-cli): webpack CLI provides a flexible set of commands for developers to increase speed when setting up a custom webpack project
 
 > Note: will be prompted to install `webpack-CLI` when first trying to run the application
-
-* [yarn](https://yarnpkg.com/): package manager of choice
