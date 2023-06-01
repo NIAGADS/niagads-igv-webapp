@@ -15,8 +15,8 @@
     "alwaysStrict": true,
     "lib": [ "dom", "dom.iterable", "esnext" ],
     "moduleResolution": "node",
-    "experimentalDecorators": true,
     "baseUrl": "../",
+    "experimentalDecorators": true,
     "typeRoots": ["./src/ambient_types", "node_modules/@types"],
     "outDir": "dist"
   },

@@ -8,7 +8,7 @@
         "build": "webpack --mode production"
     },
     "keywords": [],
-    "author": "",
+    "author": "fossilfriend,simoncole",
     "license": "ISC",
     "devDependencies": {
         "@babel/core": "^7.17.10",

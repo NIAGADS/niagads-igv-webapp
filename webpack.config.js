@@ -8,7 +8,7 @@ module.exports = {
     publicPath: "/",
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   plugins: [
     new HTMLWebpackPlugin({
