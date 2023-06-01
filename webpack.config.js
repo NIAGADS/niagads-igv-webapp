@@ -13,6 +13,10 @@ module.exports = {
         options: { presets: ["@babel/env"] },
       },
       {
+        test: /\.(ts|tsx)$/,
+        loader: "ts-loader",
+      },
+      {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
