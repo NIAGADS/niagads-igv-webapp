@@ -1,5 +1,5 @@
-import ADSK17KR3Variants from './ADSK17KR3Variants.json';
+import ADSK_17 from './ADSK_17K_R3_Variants.json';
 
-export default {
-    ADSK17KR3Variants:
+export const config = {
+    ADSK17KR3Variants: ADSK_17
 };
