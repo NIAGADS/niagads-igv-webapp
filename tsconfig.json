@@ -18,7 +18,8 @@
     "experimentalDecorators": true,
     "baseUrl": "../",
     "typeRoots": ["./src/ambient_types", "node_modules/@types"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "resolveJsonModule": true
   },
   "exclude": ["dist/**/*"]
 }
