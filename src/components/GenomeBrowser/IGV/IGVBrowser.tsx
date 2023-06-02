@@ -8,6 +8,7 @@ import {
   VariantServiceTrack as VariantTrack,
 } from "./Tracks";
 import { _genomes } from "../../../../data/_igvGenomes";
+import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -17,6 +18,7 @@ interface IGVBrowserProps {
   locus?: string;
   onTrackRemoved?: (track: string) => void;
   onBrowserLoad?: (Browser: any) => void;
+  tracks: TrackBaseOptions[];
 }
 
 export const IGVBrowser: React.FC<IGVBrowserProps> = ({
@@ -25,6 +27,7 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
   locus,
   onBrowserLoad,
   onTrackRemoved,
+  tracks
 }) => {
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
