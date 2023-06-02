@@ -1,14 +1,6 @@
 
-interface trackConfig {
-    "ADSP_17K": any,
-    "NG00075_GRCh38_STAGE1": any,
-    "NG00075_GRCh38_STAGE2": any,
-    "NGEN024525": any,
-    "NGEN024585": any    
-}
-
-export const config: trackConfig = {
-    "ADSP_17K": {
+export const config: {[key: string]: any}[] = [
+     {
         "feature_type": "variant",
         "endpoint": "https://www.niagads.org/genomics/service/track/variant",
         "consortium": "ADSP",
@@ -40,7 +32,7 @@ export const config: trackConfig = {
           "Description": "Variants from the Alzheimer''s Disease Sequencing Project (ADSP) 17K R3 whole genome sequencing effort - INDELs and SNVs that passed the ADSP biallelic quality control (QC) criteria. Variants are annotated by the ADSP Annotation Pipeline."
         }
     },
-    "NG00075_GRCh38_STAGE1": {
+    {
         "biosample_characteristics": {
           "gender": null,
           "anatomical_system": null,
@@ -87,7 +79,7 @@ export const config: trackConfig = {
         "expandQuery": false,
         "sourceType": "custom"
       },
-      "NG00075_GRCh38_STAGE2": {
+      {
         "feature_type": "variant",
         "endpoint": "https://www.niagads.org/genomics/service/track/variant",
         "consortium": "ADSP",
@@ -119,7 +111,7 @@ export const config: trackConfig = {
           "Description": "Variants from the Alzheimer''s Disease Sequencing Project (ADSP) 17K R3 whole genome sequencing effort - INDELs and SNVs that passed the ADSP biallelic quality control (QC) criteria. Variants are annotated by the ADSP Annotation Pipeline."
         }
       },
-      "NGEN024525": {
+      {
         "biosample_characteristics": {
           "defintion": "A CD4-positive, alpha-beta T cell that has differentiated into a memory T cell.",
           "gender": null,
@@ -165,7 +157,7 @@ export const config: trackConfig = {
         "visibilityWindow": -1,
         "removable": true
       },
-      "NGEN024585": {
+      {
         "biosample_characteristics": {
           "defintion": "A paired organ of the urinary tract which has the production of urine as its primary function.",
           "gender": null,
@@ -211,5 +203,4 @@ export const config: trackConfig = {
         "visibilityWindow": -1,
         "removable": true
       }
-
-    };
+    ];
