@@ -2,7 +2,7 @@ import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
 
 export const config: TrackBaseOptions[] = [
      {
-        "url": "https://www.niagads.org/genomics/service/track/variant",
+        "url": "/service/track/variant",
         "name": "ADSK 17K R3 Variants",
         "type": "variant_service",
         "visibilityWindow": 1000000,
@@ -12,7 +12,7 @@ export const config: TrackBaseOptions[] = [
     },
     {
         "description": "summary statistics from meta-analysis results obtained in the stage 1 GWAS study, including genotyped and imputed data (11,480,632 variants, phase 1 integrated release 3, March 2012) of 21,982 Alzheimer's disease cases and 41,944 cognitively normal controls. The meta-analysis examined SNPs genotyped or imputed in at least 30% of the AD cases and 30% of the control samples across all datasets. (Lifted Over from GRCh37 to GRCh38)",
-        "url": "https://www.niagads.org/genomics/service/track/gwas",
+        "url": "/service/track/gwas",
         "name": "IGAP Rare Variants: Stage 1 (GRCh38) (Kunkle et al. 2019)",
         "type": "gwas_service",
         "visibilityWindow": 1000000,

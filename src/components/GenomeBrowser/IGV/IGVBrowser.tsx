@@ -36,29 +36,14 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
     const referenceTrackConfig: any = find(_genomes, { id: genome });
 
-    // set gene track urls
-    // referenceTrackConfig.tracks[0] = setUrls(referenceTrackConfig.tracks[0]);
-    // let boptions = {
-    //     reference: {
-    //         id: referenceTrackId,
-    //         name: referenceTrackConfig.name,
-    //         fastaURL: referenceTrackConfig.fastaURL,
-    //         indexURL: referenceTrackConfig.indexURL,
-    //         cytobandURL: referenceTrackConfig.cytobandURL,
-    //         tracks: referenceTrackConfig.tracks,
-    //     },
-    //     loadDefaultGenomes: false,
-    //     genomeList: _genomes,
-    // };
-
     let options = {
       locus: locus || "ABCA7",
       showAllChromosomes: false,
       flanking: DEFAULT_FLANK,
       minimumBases: 40,
-      // search: {
-      //   url: `${featureSearchUrl}$FEATURE$&flank=${DEFAULT_FLANK}`,
-      // },
+      search: {
+        url: `${featureSearchUrl}$FEATURE$&flank=${DEFAULT_FLANK}`,
+      },
       reference: {
         id: genome,
         name: referenceTrackConfig.name,
