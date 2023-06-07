@@ -8,7 +8,7 @@ module.exports = {
     publicPath: "/",
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx']
+    extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
   plugins: [
     new HTMLWebpackPlugin({
@@ -57,5 +57,12 @@ module.exports = {
     hot: true,
     port: 3000,
     open: true,
+    proxy: {
+      "/service/**": {
+        target: "https://www.niagads.org/genomics",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 };
