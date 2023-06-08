@@ -234,8 +234,10 @@ class VariantServiceTrack extends igv.TrackBase {
                     x += 1;
                     w -= 2;
                 }
-                context.fillStyle = this.getVariantColor(variant);
-                context.fillRect(x, y, w, h);
+                // context.fillStyle = this.getVariantColor(variant);
+                // context.fillRect(x, y, w, h);
+                igv.IGVGraphics.fillSytle = this.getVariantColor(variant)
+                igv.IGVGraphics.fillRect(context, x, y, w, h);
                 variant.pixelRect = { x, y, w, h };
 
                 // Loop though the calls for this variant.  There will potentially be a call for each sample.
@@ -268,18 +270,19 @@ class VariantServiceTrack extends igv.TrackBase {
                             }
 
                             if (!call.genotype) {
-                                context.fillStyle = this.noGenotypeColor;
+                                // context.fillStyle = this.noGenotypeColor;
+                                igv.IGVGraphics.fillStyle = this.noGenotypeColor;
                             } else if (noCall) {
-                                context.fillStyle = this.noCallColor;
+                                igv.IGVGraphics.fillStyle = this.noCallColor;
                             } else if (allRef) {
-                                context.fillStyle = this.homrefColor;
+                                igv.IGVGraphics.fillStyle = this.homrefColor;
                             } else if (allVar) {
-                                context.fillStyle = this.homvarColor;
+                                igv.IGVGraphics.fillStyle = this.homvarColor;
                             } else {
-                                context.fillStyle = this.hetvarColor;
+                                igv.IGVGraphics.fillStyle = this.hetvarColor;
                             }
 
-                            context.fillRect(x, py, w, callHeight);
+                            igv.IGVGraphics.fillRect(x, py, w, callHeight);
 
                             callSet.pixelRect = { x, y: py, w, h: callHeight };
                         }
