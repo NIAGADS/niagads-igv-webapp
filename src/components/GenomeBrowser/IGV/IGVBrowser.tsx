@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useMemo } from "react";
 import igv from "igv/dist/igv.esm";
 import merge from "lodash.merge";
 import noop from "lodash.noop";
@@ -9,6 +9,7 @@ import {
 } from "./Tracks";
 import { _genomes } from "../../../../data/_igvGenomes";
 import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
+import { resolveTrackReader } from "../../../utils/tracks";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -29,14 +30,10 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
   onTrackRemoved,
   tracks
 }) => {
-  useLayoutEffect(() => {
-    window.addEventListener("ERROR: Genome Browser - ", (event) => {
-      console.log(event);
-    });
 
+  const options = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
-
-    let options = {
+    let memoOptions = {
       locus: locus || "ABCA7",
       showAllChromosomes: false,
       flanking: DEFAULT_FLANK,
@@ -56,34 +53,46 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
       genomeList: _genomes,
     }
 
-    if (!options.hasOwnProperty("tracks")) {
-      options = merge(options, { tracks: [] });
+    for(let track of tracks){
+      track.reader = resolveTrackReader(track.type, {endpoint: track.url, track: track.id})
     }
 
-    const targetDiv = document.getElementById("genome-browser");
-    igv.createBrowser(targetDiv, options).then(function (browser: any) {
-      // browser is initialized and can now be used
-   
-      // browser.on("trackclick", _customTrackPopup);
-
-      // perform action in encapsulating component if track is removed
-      browser.on("trackremoved", function (track: any) {
-        onTrackRemoved && onTrackRemoved(track.config.id);
-      });
-
-      browser.addTrackToFactory(
-        "gwas_service",
-        (config: any, browser: any) => new GWASTrack(config, browser)
-      );
-
-      browser.addTrackToFactory(
-        "variant_service",
-        (config: any, browser: any) => new VariantTrack(config, browser)
-      );
-
-      onBrowserLoad ? onBrowserLoad(browser) : noop();
+    if (!memoOptions.hasOwnProperty("tracks")) {
+      memoOptions = merge(memoOptions, { tracks: tracks });
+    }
+    return memoOptions;
+  }, [genome]);
+  
+  useLayoutEffect(() => {
+    window.addEventListener("ERROR: Genome Browser - ", (event) => {
+      console.log(event);
     });
-  }, [onBrowserLoad]);
+    if(options != null){
+      const targetDiv = document.getElementById("genome-browser");
+      igv.createBrowser(targetDiv, options).then(function (browser: any) {
+        // browser is initialized and can now be used
+    
+        // browser.on("trackclick", _customTrackPopup);
+
+        // perform action in encapsulating component if track is removed
+        browser.on("trackremoved", function (track: any) {
+          onTrackRemoved && onTrackRemoved(track.config.id);
+        });
+
+        browser.addTrackToFactory(
+          "gwas_service",
+          (config: any, browser: any) => new GWASTrack(config, browser)
+        );
+
+        browser.addTrackToFactory(
+          "variant_service",
+          (config: any, browser: any) => new VariantTrack(config, browser)
+        );
+
+        onBrowserLoad ? onBrowserLoad(browser) : noop();
+      });
+    }
+  }, [onBrowserLoad, options]);
 
   return <span style={{ width: "100%" }} id="genome-browser" />;
 };
