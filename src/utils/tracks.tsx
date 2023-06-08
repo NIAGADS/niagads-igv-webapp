@@ -1,5 +1,7 @@
 import get from "lodash.get";
 import { ALWAYS_ON_TRACKS } from "../../data/_constants";
+import { VariantServiceReader } from "../components/GenomeBrowser/IGV/Readers";
+import { GWASServiceReader } from "../components/GenomeBrowser/IGV/Readers";
 
 export const getTrackID = (trackView: any) => {
     const track = trackView.track;
@@ -19,4 +21,15 @@ export const removeTrackById = (trackId: string, browser: any) => {
     const trackViews = get(browser, "trackViews", []);
     const trackView = trackViews.filter((view: any) => getTrackID(view) === trackId);
     browser.removeTrack(trackView[0].track);
+};
+
+export const resolveTrackReader = (trackType: string, config: any): any => {
+    switch (trackType) {
+        case "gwas_service":
+            return new GWASServiceReader(config);
+        case "variant_service":
+            return new VariantServiceReader(config);
+        default:
+            return null;
+    }
 };

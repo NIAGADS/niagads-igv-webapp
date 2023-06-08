@@ -9,6 +9,7 @@ import {
 } from "./Tracks";
 import { _genomes } from "../../../../data/_igvGenomes";
 import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
+import { resolveTrackReader } from "../../../utils/tracks";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -50,6 +51,10 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
       },
       loadDefaultGenomes: false,
       genomeList: _genomes,
+    }
+
+    for(let track of tracks){
+      track.reader = resolveTrackReader(track.type, {endpoint: track.url, track: track.id})
     }
 
     if (!memoOptions.hasOwnProperty("tracks")) {

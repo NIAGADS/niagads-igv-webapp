@@ -16,6 +16,8 @@ export interface TrackBaseOptions {
     format?: string;
     indexURL?: string;
     url: string;
+    reader?: any;
+    id: string;
 }
 //do defaults
 
