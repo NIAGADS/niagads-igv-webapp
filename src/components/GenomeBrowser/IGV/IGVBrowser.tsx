@@ -58,7 +58,7 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
 
     if (!memoOptions.hasOwnProperty("tracks")) {
-      memoOptions = merge(memoOptions, { tracks: [] });
+      memoOptions = merge(memoOptions, { tracks: tracks });
     }
     return memoOptions;
   }, [genome]);
