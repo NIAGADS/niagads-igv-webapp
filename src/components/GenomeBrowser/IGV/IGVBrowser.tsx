@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useMemo, useState, useEffect } from "react";
 import igv from "igv/dist/igv.esm";
 import merge from "lodash.merge";
 import noop from "lodash.noop";
@@ -8,7 +8,8 @@ import {
   VariantServiceTrack as VariantTrack,
 } from "./Tracks";
 import { _genomes } from "../../../../data/_igvGenomes";
-import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
+import { TrackBaseOptions } from "../../../types/Tracks";
+import { resolveTrackReader, loadTrack } from "../../../utils";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -27,16 +28,14 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
   locus,
   onBrowserLoad,
   onTrackRemoved,
-  tracks
+  tracks,
 }) => {
-  useLayoutEffect(() => {
-    window.addEventListener("ERROR: Genome Browser - ", (event) => {
-      console.log(event);
-    });
+  const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
+  const [browser, setBrowser] = useState<any>(null);
 
+  const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
-
-    let options = {
+    return {
       locus: locus || "ABCA7",
       showAllChromosomes: false,
       flanking: DEFAULT_FLANK,
@@ -54,39 +53,62 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
       },
       loadDefaultGenomes: false,
       genomeList: _genomes,
-    }
+    };
+  }, [genome, locus]);
 
-    if (!options.hasOwnProperty("tracks")) {
-      options = merge(options, { tracks: [] });
-    }
+
+  useEffect(() => {
+      if (browserIsLoaded && memoOptions) {
+        for (let track of tracks) {
+           // if a service track, assign the reader
+            if (track.type.includes("_service")) {
+              track.reader = resolveTrackReader(track.type, {
+                endpoint: track.url,
+                track: track.id,
+              });
+            }
+
+            // load
+            browser.loadTrack(track)
+        }
+      }
+  }, [browserIsLoaded, memoOptions, tracks])
+
+  useLayoutEffect(() => {
+    window.addEventListener("ERROR: Genome Browser - ", (event) => {
+      console.log(event);
+    });
 
     const targetDiv = document.getElementById("genome-browser");
-    igv.createBrowser(targetDiv, options).then(function (browser: any) {
-      // browser is initialized and can now be used
-   
-      // browser.on("trackclick", _customTrackPopup);
+    if (memoOptions != null) {
+      igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
+        // browser is initialized and can now be used
 
-      // perform action in encapsulating component if track is removed
-      browser.on("trackremoved", function (track: any) {
-        onTrackRemoved && onTrackRemoved(track.config.id);
+        // browser.on("trackclick", _customTrackPopup);
+
+        // perform action in encapsulating component if track is removed
+        browser.on("trackremoved", function (track: any) {
+          onTrackRemoved && onTrackRemoved(track.config.id);
+        });
+
+        browser.addTrackToFactory(
+          "gwas_service",
+          (config: any, browser: any) => new GWASTrack(config, browser)
+        );
+
+        browser.addTrackToFactory(
+          "variant_service",
+          (config: any, browser: any) => new VariantTrack(config, browser)
+        );
+
+        setBrowser(browser);
+        onBrowserLoad ? onBrowserLoad(browser) : noop();
+        setBrowserIsLoaded(true);
       });
-
-      browser.addTrackToFactory(
-        "gwas_service",
-        (config: any, browser: any) => new GWASTrack(config, browser)
-      );
-
-      browser.addTrackToFactory(
-        "variant_service",
-        (config: any, browser: any) => new VariantTrack(config, browser)
-      );
-
-      onBrowserLoad ? onBrowserLoad(browser) : noop();
-    });
-  }, [onBrowserLoad]);
+    }
+  }, [onBrowserLoad, memoOptions]);
 
   return <span style={{ width: "100%" }} id="genome-browser" />;
 };
-
 
 export const MemoIGVBroswer = React.memo(IGVBrowser);
