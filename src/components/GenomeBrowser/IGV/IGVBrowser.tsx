@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo } from "react";
+import React, { useLayoutEffect, useMemo, useState, useEffect } from "react";
 import igv from "igv/dist/igv.esm";
 import merge from "lodash.merge";
 import noop from "lodash.noop";
@@ -8,8 +8,8 @@ import {
   VariantServiceTrack as VariantTrack,
 } from "./Tracks";
 import { _genomes } from "../../../../data/_igvGenomes";
-import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
-import { resolveTrackReader } from "../../../utils/tracks";
+import { TrackBaseOptions } from "../../../types/Tracks";
+import { resolveTrackReader, loadTrack } from "../../../utils";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -28,12 +28,14 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
   locus,
   onBrowserLoad,
   onTrackRemoved,
-  tracks
+  tracks,
 }) => {
+  const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
+  const [browser, setBrowser] = useState<any>(null);
 
-  const options = useMemo(() => {
+  const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
-    let memoOptions = {
+    return {
       locus: locus || "ABCA7",
       showAllChromosomes: false,
       flanking: DEFAULT_FLANK,
@@ -51,27 +53,37 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
       },
       loadDefaultGenomes: false,
       genomeList: _genomes,
-    }
+    };
+  }, [genome, locus]);
 
-    for(let track of tracks){
-      track.reader = resolveTrackReader(track.type, {endpoint: track.url, track: track.id})
-    }
 
-    if (!memoOptions.hasOwnProperty("tracks")) {
-      memoOptions = merge(memoOptions, { tracks: tracks });
-    }
-    return memoOptions;
-  }, [genome]);
-  
+  useEffect(() => {
+      if (browserIsLoaded && memoOptions) {
+        for (let track of tracks) {
+           // if a service track, assign the reader
+            if (track.type.includes("_service")) {
+              track.reader = resolveTrackReader(track.type, {
+                endpoint: track.url,
+                track: track.id,
+              });
+            }
+
+            // load
+            browser.loadTrack(track)
+        }
+      }
+  }, [browserIsLoaded, memoOptions, tracks])
+
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
       console.log(event);
     });
-    if(options != null){
-      const targetDiv = document.getElementById("genome-browser");
-      igv.createBrowser(targetDiv, options).then(function (browser: any) {
+
+    const targetDiv = document.getElementById("genome-browser");
+    if (memoOptions != null) {
+      igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
         // browser is initialized and can now be used
-    
+
         // browser.on("trackclick", _customTrackPopup);
 
         // perform action in encapsulating component if track is removed
@@ -89,13 +101,14 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
           (config: any, browser: any) => new VariantTrack(config, browser)
         );
 
+        setBrowser(browser);
         onBrowserLoad ? onBrowserLoad(browser) : noop();
+        setBrowserIsLoaded(true);
       });
     }
-  }, [onBrowserLoad, options]);
+  }, [onBrowserLoad, memoOptions]);
 
   return <span style={{ width: "100%" }} id="genome-browser" />;
 };
-
 
 export const MemoIGVBroswer = React.memo(IGVBrowser);
