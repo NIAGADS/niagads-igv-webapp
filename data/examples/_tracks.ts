@@ -1,4 +1,4 @@
-import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
+import { TrackBaseOptions } from "@igv-types/Tracks"
 
 export const config: TrackBaseOptions[] = [
      {

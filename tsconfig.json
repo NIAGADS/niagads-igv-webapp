@@ -13,13 +13,19 @@
     "jsx": "react",
     "strict": true,
     "alwaysStrict": true,
-    "lib": [ "dom", "dom.iterable", "esnext" ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "moduleResolution": "node",
-    "baseUrl": "../",
+    "baseUrl": ".",
     "experimentalDecorators": true,
     "typeRoots": ["./src/ambient_types", "node_modules/@types"],
     "outDir": "dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@igv-components/*": ["./src/components/*"],
+      "@igv-utils/*": ["./src/utils/*"],
+      "@igv-types/*": ["./src/types/*"],
+      "@data/*": ["./data/*"]
+    }
   },
   "exclude": ["dist/**/*"]
 }

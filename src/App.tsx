@@ -2,7 +2,7 @@ import React, { Component} from "react";
 
 import { IGVBrowser } from "./components/GenomeBrowser/IGV/IGVBrowser"
 import { FEATURE_SEARCH_ENDPOINT } from "../data/_constants";
-import { config } from "../data/_tracks";
+import { config } from "../data/examples/_tracks";
 
 const App = () => {
   return (

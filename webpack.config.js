@@ -9,6 +9,12 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
+    alias: {
+      "@igv-types": path.resolve(__dirname, "/src/types"),
+      "@igv-utils": path.resolve(__dirname, "/src/utils"),
+      "@igv-components": path.resolve(__dirName, "/src/components"),
+      "@data": path.resolve(__dirname, "/data")
+    }
   },
   plugins: [
     new HTMLWebpackPlugin({
