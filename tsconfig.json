@@ -21,10 +21,13 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "paths": {
-      "@igv-components/*": ["./src/components/*"],
-      "@igv-utils/*": ["./src/utils/*"],
-      "@igv-types/*": ["./src/types/*"],
-      "@data/*": ["./data/*"]
+      "@components/*": ["./src/components/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@browser-types/*": ["./src/types/*"],
+      "@data/*": ["./data/*"],
+      "@readers/*": ["./src/readers/*"],
+      "@tracks/*": ["./src/tracks/*"],
+      "@parsers/*": ["./src/parsers"]
     }
   },
   "exclude": ["dist/**/*"]

@@ -2,6 +2,8 @@
 import igv from "igv/dist/igv.esm";
 import $ from "jquery";
 
+import { VCFInfo } from "@browser-types/files";
+
 const DEFAULT_POPOVER_WINDOW = 100000000;
 const DEFAULT_VISIBILITY_WINDOW = 1000000;
 const DEFAULT_COLOR_BY = "impact";
@@ -13,29 +15,6 @@ interface ColorByCategory {
     default: string;
 }
 
-export interface ConsequenceData {
-    conseq: string;
-    impact: string;
-    is_coding: boolean;
-    codon_change: string;
-    amino_acid_change: string;
-    impacted_gene: string;
-    impacted_gene_symbol: string;
-}
-
-export interface VcfInfo {
-    location: string;
-    position: number;
-    chromosome: string;
-    display_id: string;
-    metaseq_id: string;
-    ref_snp_id: string;
-    variant_class: string;
-    display_allele: string;
-    is_adsp_variant: boolean;
-    variant_class_abbrev: string;
-    most_severe_consequence: ConsequenceData;
-}
 
 const COLOR_BY_FIELDS: ColorByCategory[] = [
     { field: "type", label: "Variant Type", default: "SNV" },
@@ -316,7 +295,7 @@ class VariantServiceTrack extends igv.TrackBase {
         return vc;
     }
 
-    getColorByValue(info: VcfInfo) {
+    getColorByValue(info: VCFInfo) {
         switch (this.colorBy) {
             case "type":
                 return this.getVariantClass(info.variant_class_abbrev, info.display_allele);

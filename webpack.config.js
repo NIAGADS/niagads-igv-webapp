@@ -10,10 +10,13 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
     alias: {
-      "@igv-types": path.resolve(__dirname, "/src/types"),
-      "@igv-utils": path.resolve(__dirname, "/src/utils"),
-      "@igv-components": path.resolve(__dirName, "/src/components"),
-      "@data": path.resolve(__dirname, "/data")
+      "@browser-types": path.resolve(__dirname, "/src/types"),
+      "@utils": path.resolve(__dirname, "/src/utils"),
+      "@components": path.resolve(__dirName, "/src/components"),
+      "@data": path.resolve(__dirname, "/data"),
+      "@readers": path.resolve(__dirname, "/src/readers"),
+      "@tracks": path.resolve(__dirname, "/src/tracks"),
+      "@parsers": path.resolve(__dirname, "/src/parsers"),
     }
   },
   plugins: [

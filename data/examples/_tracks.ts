@@ -1,7 +1,7 @@
-import { TrackBaseOptions } from "@igv-types/Tracks"
+import { TrackBaseOptions } from "@browser-types/tracks"
 
 export const config: TrackBaseOptions[] = [
-     {
+    {
         "url": "/service/track/variant",
         "name": "ADSK 17K R3 Variants",
         "type": "variant_service",

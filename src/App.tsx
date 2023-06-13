@@ -1,12 +1,12 @@
-import React, { Component} from "react";
+import React from "react";
 
-import { IGVBrowser } from "./components/GenomeBrowser/IGV/IGVBrowser"
-import { FEATURE_SEARCH_ENDPOINT } from "../data/_constants";
-import { config } from "../data/examples/_tracks";
+import { MemoIGVBrowser as GenomeBrowser} from "@components/IGVBrowser"
+import { FEATURE_SEARCH_ENDPOINT } from "@data/_constants";
+import { config } from "@data/examples/_tracks";
 
 const App = () => {
   return (
-    <IGVBrowser tracks={config} featureSearchUrl={FEATURE_SEARCH_ENDPOINT} genome="hg38_refseq"></IGVBrowser>
+    <GenomeBrowser tracks={config} featureSearchUrl={FEATURE_SEARCH_ENDPOINT} genome="hg38_refseq"></GenomeBrowser>
   )
 }
 

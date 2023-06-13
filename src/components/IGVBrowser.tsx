@@ -1,15 +1,14 @@
 import React, { useLayoutEffect, useMemo, useState, useEffect } from "react";
 import igv from "igv/dist/igv.esm";
-import merge from "lodash.merge";
 import noop from "lodash.noop";
 import find from "lodash.find";
 import {
   GWASServiceTrack as GWASTrack,
   VariantServiceTrack as VariantTrack,
-} from "./Tracks";
-import { _genomes } from "../../../../data/_igvGenomes";
-import { TrackBaseOptions } from "../../../types/Tracks";
-import { resolveTrackReader, loadTrack } from "../../../utils";
+} from "@tracks/index";
+import { _genomes } from "@data/_igvGenomes";
+import { TrackBaseOptions } from "@browser-types/tracks";
+import { resolveTrackReader, loadTrack } from "@utils/index";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -22,7 +21,7 @@ interface IGVBrowserProps {
   tracks: TrackBaseOptions[];
 }
 
-export const IGVBrowser: React.FC<IGVBrowserProps> = ({
+const IGVBrowser: React.FC<IGVBrowserProps> = ({
   featureSearchUrl,
   genome,
   locus,
@@ -111,4 +110,5 @@ export const IGVBrowser: React.FC<IGVBrowserProps> = ({
   return <span style={{ width: "100%" }} id="genome-browser" />;
 };
 
-export const MemoIGVBroswer = React.memo(IGVBrowser);
+export const MemoIGVBrowser = React.memo(IGVBrowser);
+export default IGVBrowser;
