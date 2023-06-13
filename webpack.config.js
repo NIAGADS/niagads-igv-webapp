@@ -1,5 +1,6 @@
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+
 module.exports = {
   entry: "./src/index.js",
   output: {
@@ -12,7 +13,7 @@ module.exports = {
     alias: {
       "@browser-types": path.resolve(__dirname, "/src/types"),
       "@utils": path.resolve(__dirname, "/src/utils"),
-      "@components": path.resolve(__dirName, "/src/components"),
+      "@components": path.resolve(__dirname, "/src/components"),
       "@data": path.resolve(__dirname, "/data"),
       "@readers": path.resolve(__dirname, "/src/readers"),
       "@tracks": path.resolve(__dirname, "/src/tracks"),
