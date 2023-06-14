@@ -13,13 +13,22 @@
     "jsx": "react",
     "strict": true,
     "alwaysStrict": true,
-    "lib": [ "dom", "dom.iterable", "esnext" ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "moduleResolution": "node",
-    "baseUrl": "../",
+    "baseUrl": ".",
     "experimentalDecorators": true,
     "typeRoots": ["./src/ambient_types", "node_modules/@types"],
     "outDir": "dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@browser-types/*": ["./src/types/*"],
+      "@data/*": ["./src/data/*"],
+      "@readers/*": ["./src/readers/*"],
+      "@tracks/*": ["./src/tracks/*"],
+      "@parsers/*": ["./src/parsers"]
+    }
   },
   "exclude": ["dist/**/*"]
 }
