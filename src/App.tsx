@@ -1,8 +1,8 @@
 import React from "react";
 
 import { MemoIGVBrowser as GenomeBrowser} from "@components/IGVBrowser"
-import { FEATURE_SEARCH_ENDPOINT } from "@data/_constants";
-import { config } from "@data/examples/_tracks";
+import { FEATURE_SEARCH_ENDPOINT } from "@data/_constants"
+import { config } from "../public/examples/_tracks"
 
 const App = () => {
   return (

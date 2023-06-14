@@ -14,7 +14,7 @@ module.exports = {
       "@browser-types": path.resolve(__dirname, "/src/types"),
       "@utils": path.resolve(__dirname, "/src/utils"),
       "@components": path.resolve(__dirname, "/src/components"),
-      "@data": path.resolve(__dirname, "/data"),
+      "@data": path.resolve(__dirname, "/src/data"),
       "@readers": path.resolve(__dirname, "/src/readers"),
       "@tracks": path.resolve(__dirname, "/src/tracks"),
       "@parsers": path.resolve(__dirname, "/src/parsers"),
