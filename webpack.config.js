@@ -1,5 +1,6 @@
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+
 module.exports = {
   entry: "./src/index.js",
   output: {
@@ -9,6 +10,15 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
+    alias: {
+      "@browser-types": path.resolve(__dirname, "/src/types"),
+      "@utils": path.resolve(__dirname, "/src/utils"),
+      "@components": path.resolve(__dirname, "/src/components"),
+      "@data": path.resolve(__dirname, "/data"),
+      "@readers": path.resolve(__dirname, "/src/readers"),
+      "@tracks": path.resolve(__dirname, "/src/tracks"),
+      "@parsers": path.resolve(__dirname, "/src/parsers"),
+    }
   },
   plugins: [
     new HTMLWebpackPlugin({

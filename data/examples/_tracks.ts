@@ -1,7 +1,7 @@
-import { TrackBaseOptions } from "niagads-igv-webapp/src/types/Tracks";
+import { TrackBaseOptions } from "@browser-types/tracks"
 
 export const config: TrackBaseOptions[] = [
-     {
+    {
         "url": "/service/track/variant",
         "name": "ADSK 17K R3 Variants",
         "type": "variant_service",
@@ -22,9 +22,9 @@ export const config: TrackBaseOptions[] = [
         "id": "NG00075_GRCh38_STAGE1"
       },
       {
-        "url": "/service/track/gaws",
+        "url": "/service/track/gwas",
         "name": "IGAP Rare Variants: Stage 2 (GRCh38) (Kunkle et al. 2019)",
-        "type": "variant_service",
+        "type": "gwas_service",
         "visibilityWindow": 1000000,
         "removable": true,
         "queryable": true,

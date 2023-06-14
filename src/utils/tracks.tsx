@@ -1,7 +1,7 @@
 import get from "lodash.get";
-import { ALWAYS_ON_TRACKS } from "../../data/_constants";
-import { VariantServiceReader } from "../components/GenomeBrowser/IGV/Readers";
-import { GWASServiceReader } from "../components/GenomeBrowser/IGV/Readers";
+import { ALWAYS_ON_TRACKS } from "@data/_constants";
+import VariantServiceReader  from "@readers/VariantServiceReader"
+import GWASServiceReader from "@readers/GWASServiceReader"
 
 export const getTrackID = (trackView: any) => {
     const track = trackView.track;
