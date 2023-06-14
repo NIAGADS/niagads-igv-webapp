@@ -1,5 +1,5 @@
 import igv from "igv/dist/igv.esm";
-import { VcfInfo } from "../Tracks/VariantServiceTrack";
+import { VCFInfo } from "@browser-types/files" 
 
 interface VariantServiceResponse {
    chrom: string;
@@ -8,7 +8,7 @@ interface VariantServiceResponse {
    alt: string;
    qual: string;
    filter: number;
-   info: VcfInfo;
+   info: VCFInfo;
 }
 
 class VariantServiceReader {
