@@ -4,7 +4,7 @@ export const config: TrackBaseOptions[] = [
   {
     name: "GTEx Whole Blood eQTL",
     type: "annotation",
-    format: "bed",
+    format: "bed6+13",
     description: "test track; only has data in ABCA7 region",
     id: "EQTL_TEST",
     url: "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz",
