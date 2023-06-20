@@ -9,6 +9,7 @@ import {
 import { _genomes } from "@data/_igvGenomes";
 import { TrackBaseOptions } from "@browser-types/tracks";
 import { resolveTrackReader, loadTrack } from "@utils/index";
+// import decodeBed from "src/decoders/bedDecoder";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -66,6 +67,9 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
                 track: track.id,
               });
             }
+            // else if(track.id === "EQTL_TEST"){
+            //   track.decoder = decodeBed();
+            // }
 
             // load
             browser.loadTrack(track)
