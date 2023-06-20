@@ -27,7 +27,8 @@
       "@data/*": ["./src/data/*"],
       "@readers/*": ["./src/readers/*"],
       "@tracks/*": ["./src/tracks/*"],
-      "@parsers/*": ["./src/parsers"]
+      "@parsers/*": ["./src/parsers/*"],
+      "@decoders/*": ["./src/decoders/*"]
     }
   },
   "exclude": ["dist/**/*"]

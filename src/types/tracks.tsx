@@ -1,21 +1,27 @@
 export interface TrackBaseOptions {
-    removable?: boolean;
-    height?: string;
-    visibilityWindow?: number;
+    // required properties from user
+    id: string;
     type: string;
     name: string;
     description: string;
+    format: string;
+    url: string;
+    indexURL?: string;
+    indexed?: boolean;
+
+    // optional from user for custom rendering
+    height?: string;
+    visibilityWindow?: number;
     oauthToken?: any;
     queryable?: boolean
+    removable?: boolean;
     autoHeight?: boolean;
     minHeight?: number;
     maxHeight?: number;
     order?: number;
     color?: string;
-    indexed?: boolean;
-    format?: string;
-    indexURL?: string;
-    url: string;
+    
+    // IGV options
     reader?: any;
-    id: string;
+    decode?: any;
 }
