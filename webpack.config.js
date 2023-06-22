@@ -18,8 +18,9 @@ module.exports = {
       "@readers": path.resolve(__dirname, "/src/readers"),
       "@tracks": path.resolve(__dirname, "/src/tracks"),
       "@parsers": path.resolve(__dirname, "/src/parsers"),
-    }
+    },
   },
+
   plugins: [
     new HTMLWebpackPlugin({
       template: "./src/index.html",
@@ -69,6 +70,11 @@ module.exports = {
     open: true,
     proxy: {
       "/service/**": {
+        target: "https://www.niagads.org/genomics",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/files/**": {
         target: "https://www.niagads.org/genomics",
         changeOrigin: true,
         secure: false,

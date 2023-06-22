@@ -2,6 +2,7 @@
 
 import igv from "igv/dist/igv.esm";
 import gwasColors from "./gwasColors"
+import { FEATURE_INFO_BASE_URL } from "@data/_constants";
 
 const DEFAULT_POPOVER_WINDOW = 100000000
 
@@ -163,6 +164,7 @@ class GWASServiceTrack extends igv.TrackBase {
 
     popupData(clickState: any, features: any) {
         const featureList = this.clickedFeatures(clickState, features);
+        const recHref = FEATURE_INFO_BASE_URL;
         let data:any = []
         if (featureList) {
             let count = 0
@@ -181,7 +183,7 @@ class GWASServiceTrack extends igv.TrackBase {
                         data = data.concat(f.popupData())
                     } else {
                         const pos = f.end; // IGV is zero-based, so end of the variant is the position
-                        const href = this.config.endpoint.replace('service/track/gwas', 'app/record/variant') + '/' + f.record_pk;
+                        const href = recHref + '/variant/' + f.record_pk;
                         data.push({name: 'Variant:', html: `<a target="_blank" href="${href}">${f.variant}</a>`, title: "View GenomicsDB record for variant " + f.variant})
                         data.push({name: 'Location:', value: f.chr + ':' + pos})
                         data.push({name: 'p-Value:', value: f.pvalue})  

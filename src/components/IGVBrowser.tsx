@@ -5,6 +5,7 @@ import find from "lodash.find";
 import {
   GWASServiceTrack as GWASTrack,
   VariantServiceTrack as VariantTrack,
+  trackPopover
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { TrackBaseOptions } from "@browser-types/tracks";
@@ -55,23 +56,22 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     };
   }, [genome, locus]);
 
-
   useEffect(() => {
-      if (browserIsLoaded && memoOptions) {
-        for (let track of tracks) {
-           // if a service track, assign the reader
-            if (track.type.includes("_service")) {
-              track.reader = resolveTrackReader(track.type, {
-                endpoint: track.url,
-                track: track.id,
-              });
-            }
-
-            // load
-            browser.loadTrack(track)
+    if (browserIsLoaded && memoOptions) {
+      for (let track of tracks) {
+        // if a service track, assign the reader
+        if (track.type.includes("_service")) {
+          track.reader = resolveTrackReader(track.type, {
+            endpoint: track.url,
+            track: track.id,
+          });
         }
+
+        // load
+        browser.loadTrack(track);
       }
-  }, [browserIsLoaded, memoOptions, tracks])
+    }
+  }, [browserIsLoaded, memoOptions, tracks]);
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
@@ -83,13 +83,15 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
         // browser is initialized and can now be used
 
-        // browser.on("trackclick", _customTrackPopup);
+        // custom track popovers
+        browser.on("trackclick", trackPopover);
 
         // perform action in encapsulating component if track is removed
         browser.on("trackremoved", function (track: any) {
           onTrackRemoved && onTrackRemoved(track.config.id);
         });
 
+        // add custom track types to track factory
         browser.addTrackToFactory(
           "gwas_service",
           (config: any, browser: any) => new GWASTrack(config, browser)
@@ -100,9 +102,12 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           (config: any, browser: any) => new VariantTrack(config, browser)
         );
 
+        // add browser to state
         setBrowser(browser);
-        onBrowserLoad ? onBrowserLoad(browser) : noop();
         setBrowserIsLoaded(true);
+
+        // callback to parent component, if exist
+        onBrowserLoad ? onBrowserLoad(browser) : noop();
       });
     }
   }, [onBrowserLoad, memoOptions]);
