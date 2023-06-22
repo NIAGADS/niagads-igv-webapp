@@ -3,6 +3,7 @@ import igv from "igv/dist/igv.esm";
 import $ from "jquery";
 
 import { VCFInfo } from "@browser-types/files";
+import { FEATURE_INFO_BASE_URL } from "@data/_constants";
 
 const DEFAULT_POPOVER_WINDOW = 100000000;
 const DEFAULT_VISIBILITY_WINDOW = 1000000;
@@ -431,13 +432,13 @@ class VariantServiceTrack extends igv.TrackBase {
                     popupData.push("<hr/>");
                 } */
 
-                const recHref = this.config.endpoint.replace("service/track/variant", "app/record");
+                const recHref = FEATURE_INFO_BASE_URL;
                 const color = this.getVariantColor(call);
 
                 popupData.push({
                     name: "Variant:",
                     html: `<a target="_blank" href="${recHref}/variant/${call.id}">${call.info.display_id}</a>`,
-                    title: "View GenomicsDB record for variant " + call.info.display_id,
+                    title: "View NIAGADS GenomicsDB record for variant " + call.info.display_id,
                 });
 
                 if (call.info.ref_snp_id !== null) {
