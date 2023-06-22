@@ -22,12 +22,13 @@ export function decodeBedXY(tokens: any, header: any) {
 
     const columns = header.columnNames
     //Get x and y out of format
-    let x, y = 0
+    let x = 0
+    let y = 0
     const format = header.format
     let match = format.match(/bed(\d{1,2})\+(\d{1,2})/)
     if(match){
-        x = parseInt(match[0])
-        y = parseInt(match[1])
+        x = parseInt(match[1])
+        y = parseInt(match[2])
     }
 
     //parse standard columns
@@ -45,51 +46,51 @@ export function decodeBedXY(tokens: any, header: any) {
         // }
     // }
 
+    //@ts-ignore
     feature = new BedXYFeature(feature)
     
     return feature
-
 }
 
 function parseStandardFeatures(feature: BedXYFeatureType, x: number, tokens: any): BedXYFeatureType {
     let counter = 4;
     try {
 
-        if (counter >= x) return feature
+        if (counter > x) return feature
         if (!feature.name) {
             feature.name = tokens[3] === '.' ? '' : tokens[3]
         }
         counter++
 
-        if (counter >= x) return feature
+        if (counter > x) return feature
         feature.score = tokens[4] === '.' ? 0 : Number(tokens[4])
         if (isNaN(feature.score)) {
             return feature
         }
         counter++
 
-        if (counter >= x) return feature
+        if (counter > x) return feature
         feature.strand = tokens[5]
         if (!(feature.strand === '.' || feature.strand === '+' || feature.strand === '-')) {
             return feature
         }
         counter++
 
-        if (counter >= x) return feature
+        if (counter > x) return feature
         feature.cdStart = parseInt(tokens[6])
         if (isNaN(feature.cdStart)) {
             return feature
         }
         counter++
 
-        if (counter >= x) return feature
+        if (counter > x) return feature
         feature.cdEnd = parseInt(tokens[7])
         if (isNaN(feature.cdEnd)) {
             return feature
         }
         counter++
 
-        if (counter >= x) return feature
+        if (counter > x) return feature
         if (tokens[8] !== "." && tokens[8] !== "0")
             feature.color = igv.IGVColor.createColorString(tokens[8])
 
@@ -102,7 +103,13 @@ function parseStandardFeatures(feature: BedXYFeatureType, x: number, tokens: any
 
 function parseOptionalFeatures(feature: BedXYFeatureType, tokens: any, x:number, columns: any) {
     //go through tokens and add optional columns to feature
-    for()
+    let optionalFeatures: any = {}
+    for(let i = x; i < columns.length; i++){
+        optionalFeatures[columns[i]] = tokens[i]
+    }
+
+    feature.info = optionalFeatures
+    return feature
 }
 
 //@ts-ignore
