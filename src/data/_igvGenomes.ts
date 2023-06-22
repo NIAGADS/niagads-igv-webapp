@@ -1,3 +1,5 @@
+import { NIAGADS_GENOMICSDB_URL, USE_PROXY } from "@data/_constants";
+
 export const _genomes = [
     {
         id: "hg38_refseq",
@@ -39,8 +41,8 @@ export const _genomes = [
                 description: "Gene models from ENSEMBL",
                 format: "gff3",
                 filterTypes: ["chromosome"],
-                url: "@WEBAPP_URL@/files/tracks/gene/hs.GRCh38.108.gff3.gz",
-                indexURL: "@WEBAPP_URL@/files/tracks/gene/hs.GRCh38.108.gff3.gz.tbi",
+                url: (USE_PROXY ? "" : NIAGADS_GENOMICSDB_URL) + "/files/tracks/gene/hs.GRCh38.108.gff3.gz",
+                indexURL: (USE_PROXY ? "" : NIAGADS_GENOMICSDB_URL)+ "/files/tracks/gene/hs.GRCh38.108.gff3.gz.tbi",
                 visibilityWindow: -1,
                 supportsWholeGenome: false,
                 removable: false,

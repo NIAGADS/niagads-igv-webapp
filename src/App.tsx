@@ -6,7 +6,7 @@ import { config } from "../public/examples/_tracks"
 
 const App = () => {
   return (
-    <GenomeBrowser tracks={config} featureSearchUrl={FEATURE_SEARCH_ENDPOINT} genome="hg38_refseq"></GenomeBrowser>
+    <GenomeBrowser tracks={config} featureSearchUrl={FEATURE_SEARCH_ENDPOINT} genome="hg38"></GenomeBrowser>
   )
 }
 
