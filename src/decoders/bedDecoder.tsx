@@ -22,12 +22,11 @@ export function decodeBedXY(tokens: any, header: any) {
     let feature = new BedXYFeature(chr,start,end);
 
     if (X > 3) { // parse additional standard BED (beyond chr, start, end) columns
-        parseStandardFeatures(feature, X, tokens)
+        parseStandardFields(feature, X, tokens)
     }
 
     // parse optional columns
-    parseOptionalFeatures(feature, tokens, X, header.columnNames)
-
+    parseOptionalFields(feature, tokens, X, header.columnNames)
 
     return feature
 }
@@ -52,7 +51,7 @@ function parseBedToken(field: string, token: string) {
     }
 }
 
-function parseStandardFeatures(feature: BedXYFeature, X: number, tokens: any) {
+function parseStandardFields(feature: BedXYFeature, X: number, tokens: any) {
     // building an object { EXPECTED_FIELDS[index]: token[index]}
     try {
         let attributes: any = {}
@@ -75,23 +74,22 @@ function parseStandardFeatures(feature: BedXYFeature, X: number, tokens: any) {
     }
 }
 
-function parseOptionalFeatures(feature: BedXYFeature, tokens: any, X:number, columns: any) {
-
+function parseOptionalFields(feature: BedXYFeature, tokens: any, X:number, columns: any) {
     //go through tokens and perform minimal parsing add optional columns to feature.info
-    let optionalFeatures: any = {}
+    let optionalFields: any = {}
     for(let i = X; i < columns.length; i++){
-        let optFeature = tokens[i]
+        let optField = tokens[i]
         //check to see if the feature is a number in a string and convert it
-        if(!isNaN(optFeature) && typeof(optFeature) !== 'number'){
-            let num = parseFloat(optFeature)
-            Number.isInteger(num) ? parseInt(optFeature) : optFeature = num
+        if(!isNaN(optField) && typeof(optField) !== 'number'){
+            let num = parseFloat(optField)
+            Number.isInteger(num) ? parseInt(optField) : optField = num
         }
-        if(optFeature === '.') optFeature = null
+        if(optField === '.') optField = null
         
-        optionalFeatures[columns[i]] = optFeature
+        optionalFields[columns[i]] = optField
     }
 
-    feature.setAdditionalAttributes({ "info": optionalFeatures })
+    feature.setAdditionalAttributes({ "info": optionalFields })
     return
 }
 
