@@ -21,6 +21,7 @@ module.exports = {
       "@decoders": path.resolve(__dirname, "/src/decoders")
     }
   },
+
   plugins: [
     new HTMLWebpackPlugin({
       template: "./src/index.html",
@@ -70,6 +71,11 @@ module.exports = {
     open: true,
     proxy: {
       "/service/**": {
+        target: "https://www.niagads.org/genomics",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/files/**": {
         target: "https://www.niagads.org/genomics",
         changeOrigin: true,
         secure: false,

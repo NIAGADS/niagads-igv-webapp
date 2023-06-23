@@ -3,6 +3,7 @@ import igv from "igv/dist/igv.esm";
 import $ from "jquery";
 
 import { VCFInfo } from "@browser-types/files";
+import { FEATURE_INFO_BASE_URL } from "@data/_constants";
 
 const DEFAULT_POPOVER_WINDOW = 100000000;
 const DEFAULT_VISIBILITY_WINDOW = 1000000;
@@ -213,8 +214,9 @@ class VariantServiceTrack extends igv.TrackBase {
                     x += 1;
                     w -= 2;
                 }
-                context.fillStyle = this.getVariantColor(variant);
-                context.fillRect(x, y, w, h);
+                // context.fillStyle = this.getVariantColor(variant);
+                // context.fillRect(x, y, w, h);
+                igv.IGVGraphics.fillRect(context, x, y, w, h, {'fillStyle': this.getVariantColor(variant)});
                 variant.pixelRect = { x, y, w, h };
 
                 // Loop though the calls for this variant.  There will potentially be a call for each sample.
@@ -246,19 +248,21 @@ class VariantServiceTrack extends igv.TrackBase {
                                 }
                             }
 
+                            let fillStyle;
                             if (!call.genotype) {
-                                context.fillStyle = this.noGenotypeColor;
+                                // context.fillStyle = this.noGenotypeColor;
+                                fillStyle = this.noGenotypeColor;
                             } else if (noCall) {
-                                context.fillStyle = this.noCallColor;
+                                fillStyle = this.noCallColor;
                             } else if (allRef) {
-                                context.fillStyle = this.homrefColor;
+                                fillStyle = this.homrefColor;
                             } else if (allVar) {
-                                context.fillStyle = this.homvarColor;
+                                fillStyle = this.homvarColor;
                             } else {
-                                context.fillStyle = this.hetvarColor;
+                                fillStyle = this.hetvarColor;
                             }
 
-                            context.fillRect(x, py, w, callHeight);
+                            igv.IGVGraphics.fillRect(context, x, py, w, callHeight, {'fillStyle': fillStyle});
 
                             callSet.pixelRect = { x, y: py, w, h: callHeight };
                         }
@@ -428,13 +432,13 @@ class VariantServiceTrack extends igv.TrackBase {
                     popupData.push("<hr/>");
                 } */
 
-                const recHref = this.config.endpoint.replace("service/track/variant", "app/record");
+                const recHref = FEATURE_INFO_BASE_URL;
                 const color = this.getVariantColor(call);
 
                 popupData.push({
                     name: "Variant:",
                     html: `<a target="_blank" href="${recHref}/variant/${call.id}">${call.info.display_id}</a>`,
-                    title: "View GenomicsDB record for variant " + call.info.display_id,
+                    title: "View NIAGADS GenomicsDB record for variant " + call.info.display_id,
                 });
 
                 if (call.info.ref_snp_id !== null) {
