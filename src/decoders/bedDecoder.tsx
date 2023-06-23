@@ -1,14 +1,12 @@
 import igv from "igv/dist/igv.esm";
-// do not need the type; remove import, but leave in case we want it for rendering the tracks
-import { BedXYFeature as BedXYFeatureType } from "@browser-types/features";
 
-const EXPECTED_BED_FIELDS = ["chr", "start", "end", "score", "name", "strand", "cdStart", 
+const EXPECTED_BED_FIELDS = ["chr", "start", "end", "name", "score", "strand", "cdStart", 
     "cdEnd", "color", "blockCount", "blockSizes", "blockStarts"]
 
 export function decodeBedXY(tokens: any, header: any) {
 
     // Get X (number of standard BED fields) and Y (number of optional BED fields) out of format
-    let match = header.format.match(/bed(\\d{1,2})\\+(\\d+)/)
+    let match = header.format.match(/bed(\d{1,2})\+(\d+)/)
     const X = parseInt(match[1])
     const Y = parseInt(match[2])
 
@@ -21,16 +19,15 @@ export function decodeBedXY(tokens: any, header: any) {
         return new igv.DecodeError(`Unparsable bed record.`)
     }
 
-    // const feature = new igv.UCSCBedFeature({chr: chr, start: start, end: end, score: 1000})
     let feature = new BedXYFeature(chr,start,end);
 
-    // parse standard columns
     if (X > 3) { // parse additional standard BED (beyond chr, start, end) columns
-        feature = parseStandardFeatures(feature, X, tokens)
+        parseStandardFeatures(feature, X, tokens)
     }
 
     // parse optional columns
-    feature = parseOptionalFeatures(feature, tokens, X, header.columnNames)
+    parseOptionalFeatures(feature, tokens, X, header.columnNames)
+
 
     return feature
 }
@@ -55,8 +52,7 @@ function parseBedToken(field: string, token: string) {
     }
 }
 
-function parseStandardFeatures(feature: BedXYFeature, X: number, tokens: any): BedXYFeature {
-    // loop with index from 3 to X - 1
+function parseStandardFeatures(feature: BedXYFeature, X: number, tokens: any) {
     // building an object { EXPECTED_FIELDS[index]: token[index]}
     try {
         let attributes: any = {}
@@ -71,34 +67,37 @@ function parseStandardFeatures(feature: BedXYFeature, X: number, tokens: any): B
         }
 
         // add to the feature and return
-
+        feature.setAdditionalAttributes(attributes)
+        return
     } catch (e) {
             console.error(e)
-            return null
+            return
     }
 }
 
-function parseOptionalFeatures(feature: BedXYFeature, tokens: any, X:number, columns: any): BedXYFeature {
-    //go through tokens and add optional columns to feature
+function parseOptionalFeatures(feature: BedXYFeature, tokens: any, X:number, columns: any) {
 
-    // some token parsing
-    // test if tokens is a number and if so, change it to a number?
-        // do we want to differentiate between floats & integers
-        // if a number is NaN? leave as is for now
-    // change all "." to null and store it    
-    // anything else you think of
+    //go through tokens and perform minimal parsing add optional columns to feature.info
     let optionalFeatures: any = {}
     for(let i = X; i < columns.length; i++){
-        optionalFeatures[columns[i]] = tokens[i]
+        let optFeature = tokens[i]
+        //check to see if the feature is a number in a string and convert it
+        if(!isNaN(optFeature) && typeof(optFeature) !== 'number'){
+            let num = parseFloat(optFeature)
+            Number.isInteger(num) ? parseInt(optFeature) : optFeature = num
+        }
+        if(optFeature === '.') optFeature = null
+        
+        optionalFeatures[columns[i]] = optFeature
     }
 
-    feature.setAdditionalAttributes({"info":optionalFeatures})
-    return feature
+    feature.setAdditionalAttributes({ "info": optionalFeatures })
+    return
 }
 
 
 class BedXYFeature {
-    chrom: string;
+    chr: string;
     start: number;
     end: number;
     score: number;
@@ -107,7 +106,7 @@ class BedXYFeature {
     constructor(chr: string, start: number, end: number, score=1000) {
         this.start = start;
         this.end = end;
-        this.chrom = chr;
+        this.chr = chr;
         this.score = score;
     }
 
