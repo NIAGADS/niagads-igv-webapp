@@ -1,7 +1,7 @@
-export interface BedXYFeatureType {
+export interface BedXYFeature {
     chrom: string;
-    chromStart: number;
-    chromEnd: number;
+    start: number;
+    end: number;
     name?: string;
     score?: number;
     strand?: string;
