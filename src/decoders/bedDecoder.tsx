@@ -35,19 +35,10 @@ export function decodeBedXY(tokens: any, header: any) {
     feature = parseStandardFeatures(feature, x, tokens)
     //parse optional columns
     feature = parseOptionalFeatures(feature, tokens, x, columns)
-    // if (header) {
-        // let thicknessColumn = header.thicknessColumn
-        // let colorColumn = header.colorColumn
-        // if (colorColumn && colorColumn < tokens.length) {
-        //     feature.color = igv.IGVColor.createColorString(tokens[colorColumn])
-        // }
-        // if (thicknessColumn && thicknessColumn < tokens.length) {
-        //     feature.thickness = tokens[thicknessColumn]
-        // }
-    // }
 
-    //@ts-ignore
+    // @ts-ignore
     feature = new BedXYFeature(feature)
+
     
     return feature
 }
@@ -124,7 +115,7 @@ class BedXYFeature implements BedXYFeatureType{
             //@ts-ignore
             return this[attributeName]
             //@ts-ignore
-        } else if (this.info) {
+        } else if (this.info.hasOwnProperty(attributeName)) {
             //@ts-ignore
             return this.info[attributeName]
         }
