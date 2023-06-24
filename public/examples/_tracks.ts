@@ -2,6 +2,21 @@ import { TrackBaseOptions } from "@browser-types/tracks";
 
 export const config: TrackBaseOptions[] = [
   {
+    name: "big-bed test",
+    description: "testing bigBed",
+    id: "BB_TEST",
+    type: "annotation",
+    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/Downloads/ENCODE/ENCFF195KQC.bigBed",
+  },
+  {
+    name: "big-bed -> filer bed test",
+    description: "testing bigBed, as filer bed",
+    id: "BB_TEST_CONVERTED",
+    type: "annotation",
+    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz",
+    indexURL: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz.tbi"
+  },
+  {
     name: "GTEx Whole Blood eQTL",
     type: "annotation",
     format: "bed",
