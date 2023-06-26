@@ -1,5 +1,5 @@
-import GWASServiceTrack from "./GWASService/GWASServiceTrack";
+import PValueTrack from "./PValueTrack";
 import VariantServiceTrack from "./VariantServiceTrack"
 import trackPopover from "./feature_popovers"
 
-export { GWASServiceTrack, VariantServiceTrack, trackPopover };
+export { PValueTrack, VariantServiceTrack, trackPopover };
