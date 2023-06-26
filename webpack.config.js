@@ -18,7 +18,8 @@ module.exports = {
       "@readers": path.resolve(__dirname, "/src/readers"),
       "@tracks": path.resolve(__dirname, "/src/tracks"),
       "@parsers": path.resolve(__dirname, "/src/parsers"),
-    },
+      "@decoders": path.resolve(__dirname, "/src/decoders")
+    }
   },
 
   plugins: [
