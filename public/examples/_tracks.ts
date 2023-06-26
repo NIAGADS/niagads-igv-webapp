@@ -4,7 +4,7 @@ export const config: TrackBaseOptions[] = [
   {
     name: "FILER parsing test: narrowpeak / no header",
     description: "testing bigBed, as filer bed",
-    id: "BB_TEST_CONVERTED",
+    id: "narrowpeak_TEST",
     type: "annotation",
     format: "narrowpeak",
     url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz",
