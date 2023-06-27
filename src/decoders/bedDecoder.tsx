@@ -28,6 +28,8 @@ export function decodeBedXY(tokens: any, header: any) {
     // parse optional columns
     parseOptionalFields(feature, tokens, X, header.columnNames)
 
+    feature = addPValues(feature, tokens)
+
     return feature
 }
 
@@ -91,6 +93,24 @@ function parseOptionalFields(feature: BedXYFeature, tokens: any, X:number, colum
 
     feature.setAdditionalAttributes({ "info": optionalFields })
     return
+}
+
+function addPValues(tokens: any, feature: BedXYFeature){
+    const possiblePValues = ["pValue", "pvalue", "p-value", "P-VALUE", "pval", "p_value"]
+    for(let pPossibility in possiblePValues){
+        if(tokens.info.hasOwnProperty(pPossibility)){
+
+            const log10P = -(Math.log10(tokens[pPossibility]))
+
+            feature.setAdditionalAttributes({
+                "pvalue": tokens[pPossibility],
+                "neg_log10_pvalue": log10P
+            })
+
+            return feature
+        }
+    }
+    return feature
 }
 
 
