@@ -7,6 +7,7 @@ export const config: TrackBaseOptions[] = [
     id: "BB_TEST",
     type: "annotation",
     url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/Downloads/ENCODE/ENCFF195KQC.bigBed",
+    format: "narrowpeaks"
   },
   {
     name: "big-bed -> filer bed test",
@@ -14,7 +15,8 @@ export const config: TrackBaseOptions[] = [
     id: "BB_TEST_CONVERTED",
     type: "annotation",
     url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz",
-    indexURL: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz.tbi"
+    indexURL: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz.tbi",
+    format: "broadpeaks"
   },
   {
     name: "GTEx Whole Blood eQTL",

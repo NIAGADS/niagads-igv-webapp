@@ -26,7 +26,8 @@
         "ts-loader": "^9.4.3",
         "webpack": "^5.72.1",
         "webpack-cli": "^4.9.2",
-        "webpack-dev-server": "^4.9.0"
+        "webpack-dev-server": "^4.9.0",
+        "igv-widgets": "github:igvteam/igv-widgets#v1.5.4"
     },
     "dependencies": {
         "igv": "https://github.com/NIAGADS/igv.js.git#NIAGADS-2.13.9",
