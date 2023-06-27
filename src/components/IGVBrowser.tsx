@@ -11,6 +11,7 @@ import { _genomes } from "@data/_igvGenomes";
 import { TrackBaseOptions } from "@browser-types/tracks";
 import { resolveTrackReader, loadTrack } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
+import LoadSession from "./LoadSession";
 
 
 export const DEFAULT_FLANK = 1000;
@@ -34,6 +35,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
+  const [sessionJSON, setSessionJSON] = useState<any>(null);
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -118,7 +120,18 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [onBrowserLoad, memoOptions]);
 
-  return <span style={{ width: "100%" }} id="genome-browser" />;
+  useEffect(() => {
+    if(sessionJSON){
+      browser.loadSession(sessionJSON)
+    }
+  }, [sessionJSON])
+
+  return (
+    <div>
+      <LoadSession setSessionJSON={setSessionJSON}/>
+      <span style={{ width: "100%" }} id="genome-browser" />
+    </div>
+  );
 };
 
 export const MemoIGVBrowser = React.memo(IGVBrowser);
