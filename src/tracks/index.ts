@@ -1,5 +1,5 @@
-import PValueTrack from "./PValueTrack";
+import VariantPValueTrack from "./VariantPValueTrack";
 import VariantServiceTrack from "./VariantServiceTrack"
 import trackPopover from "./feature_popovers"
 
-export { PValueTrack, VariantServiceTrack, trackPopover };
+export { VariantPValueTrack, VariantServiceTrack, trackPopover };

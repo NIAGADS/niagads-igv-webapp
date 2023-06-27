@@ -9,7 +9,7 @@ const DEFAULT_POPOVER_WINDOW = 100000000
 
 //const type = "gwas";
 
-class PValueTrack extends igv.TrackBase {
+class VariantPValueTrack extends igv.TrackBase {
 
     constructor(config: any, browser: any) {
         super(config, browser)
@@ -219,5 +219,5 @@ class PValueTrack extends igv.TrackBase {
 
 }
 
-export default PValueTrack
+export default VariantPValueTrack
 

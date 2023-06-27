@@ -3,7 +3,7 @@ import igv from "igv/dist/igv.esm";
 import noop from "lodash.noop";
 import find from "lodash.find";
 import {
-  PValueTrack,
+  VariantPValueTrack,
   VariantServiceTrack as VariantTrack,
   trackPopover
 } from "@tracks/index";
@@ -100,7 +100,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         // add custom track types to track factory
         browser.addTrackToFactory(
           "gwas_service",
-          (config: any, browser: any) => new PValueTrack(config, browser)
+          (config: any, browser: any) => new VariantPValueTrack(config, browser)
         );
 
         browser.addTrackToFactory(
