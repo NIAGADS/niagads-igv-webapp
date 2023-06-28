@@ -1,10 +1,11 @@
+import { ignoreCaseIndexOf } from "@utils/index";
 import igv from "igv/dist/igv.esm";
 
 const EXPECTED_BED_FIELDS = ["chr", "start", "end", "name", "score", "strand", "cdStart", 
     "cdEnd", "color", "blockCount", "blockSizes", "blockStarts"]
 
 // make column name lower then comapare
-const P_VALUE_FIELDS = ["pvalue", "p-value",  "pval", "p_value", "PValue", "P_VALUE", "pValue"] //TODO: check nominal pvalue
+const P_VALUE_FIELDS = ["pvalue", "p-value",  "pval", "p_value"] //TODO: check nominal pvalue
 
 export function decodeBedXY(tokens: any, header: any) {
 
@@ -100,7 +101,7 @@ function parseOptionalFields(feature: BedXYFeature, tokens: any, X:number, colum
 
 function parsePValues(feature: BedXYFeature, tokens: any, columnNames: string[]) {
     for(let field of P_VALUE_FIELDS) {
-        let pIndex = columnNames.indexOf(field)
+        let pIndex = ignoreCaseIndexOf(columnNames, field)
         if(pIndex !== -1) {
             let pValue = parseFloat(tokens[pIndex])
             let neg_log10_pvalue = -1 * (Math.log10(pValue))
