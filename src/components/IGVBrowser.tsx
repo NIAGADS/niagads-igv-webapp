@@ -122,6 +122,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(sessionJSON){
+      sessionJSON.reference = memoOptions.reference
       browser.loadSession(sessionJSON)
     }
   }, [sessionJSON])
