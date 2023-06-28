@@ -3,6 +3,9 @@ import igv from "igv/dist/igv.esm";
 const EXPECTED_BED_FIELDS = ["chr", "start", "end", "name", "score", "strand", "cdStart", 
     "cdEnd", "color", "blockCount", "blockSizes", "blockStarts"]
 
+// make column name lower then comapare
+const P_VALUE_FIELDS = ["pvalue", "p-value",  "pval", "p_value", "PValue", "P_VALUE", "pValue"] //TODO: check nominal pvalue
+
 export function decodeBedXY(tokens: any, header: any) {
 
     // Get X (number of standard BED fields) and Y (number of optional BED fields) out of format
@@ -28,7 +31,7 @@ export function decodeBedXY(tokens: any, header: any) {
     // parse optional columns
     parseOptionalFields(feature, tokens, X, header.columnNames)
 
-    feature = addPValues(feature, tokens)
+    feature = parsePValues(feature, tokens, header.columnNames)
 
     return feature
 }
@@ -95,16 +98,16 @@ function parseOptionalFields(feature: BedXYFeature, tokens: any, X:number, colum
     return
 }
 
-function addPValues(tokens: any, feature: BedXYFeature){
-    const possiblePValues = ["pValue", "pvalue", "p-value", "P-VALUE", "pval", "p_value"]
-    for(let pPossibility in possiblePValues){
-        if(tokens.info.hasOwnProperty(pPossibility)){
-
-            const log10P = -(Math.log10(tokens[pPossibility]))
+function parsePValues(feature: BedXYFeature, tokens: any, columnNames: string[]) {
+    for(let field of P_VALUE_FIELDS) {
+        let pIndex = columnNames.indexOf(field)
+        if(pIndex !== -1) {
+            let pValue = parseFloat(tokens[pIndex])
+            let neg_log10_pvalue = -1 * (Math.log10(pValue))
 
             feature.setAdditionalAttributes({
-                "pvalue": tokens[pPossibility],
-                "neg_log10_pvalue": log10P
+                "pvalue": pValue,
+                "neg_log10_pvalue": neg_log10_pvalue
             })
 
             return feature
