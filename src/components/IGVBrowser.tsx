@@ -62,8 +62,11 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if (browserIsLoaded && memoOptions) {
+    // function that takes tracks and the` browser 
       for (let track of tracks) {
-        // if a service track, assign the reader
+        // if a service track, assign the reader move to utils/browse
+        //take toJSON function 
+        //maybe change type to allow reader
         if (track.type.includes("_service")) {
           track.reader = resolveTrackReader(track.type, {
             endpoint: track.url,
@@ -133,7 +136,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       <span style={{ width: "100%" }} id="genome-browser" />
     </div>
   );
-};
+};  
 
 export const MemoIGVBrowser = React.memo(IGVBrowser);
 export default IGVBrowser;

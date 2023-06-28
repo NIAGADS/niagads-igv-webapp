@@ -13,15 +13,15 @@ export interface TrackBaseOptions {
     height?: string;
     visibilityWindow?: number;
     oauthToken?: any;
-    queryable?: boolean
-    removable?: boolean;
     autoHeight?: boolean;
     minHeight?: number;
     maxHeight?: number;
     order?: number;
-    color?: string;
+    color?: string; //if a function don't export 
     
-    // IGV options
-    reader?: any;
-    decode?: any;
+    // IGV options IGVTrackOptions
+    queryable?: boolean //out
+    removable?: boolean;
+    reader?: any; //out
+    decode?: any; //out
 }
