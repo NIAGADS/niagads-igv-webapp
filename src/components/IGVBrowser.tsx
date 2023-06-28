@@ -9,7 +9,7 @@ import {
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack } from "@utils/index";
+import { resolveTrackReader, loadTrack, loadServiceTracks } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 
@@ -63,24 +63,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   useEffect(() => {
     if (browserIsLoaded && memoOptions) {
     // function that takes tracks and the` browser 
-      for (let track of tracks) {
-        // if a service track, assign the reader move to utils/browse
-        //take toJSON function 
-        //maybe change type to allow reader
-        if (track.type.includes("_service")) {
-          track.reader = resolveTrackReader(track.type, {
-            endpoint: track.url,
-            track: track.id,
-          });
-        }
-
-        if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null){ // does it match bedX+Y?
-          track.decode = decodeBedXY
-        }
-        // load
-        browser.loadTrack(track)
-        
-      }
+      loadServiceTracks(tracks, browser)
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
