@@ -8,7 +8,7 @@ export const loadTrack = async (config: any, browser: any) => {
     await browser.loadTrack(config);
 };
 
-export const loadServiceTracks = (tracks: TrackBaseOptions[], browser: any) => {
+export const loadConfigTracks = (tracks: TrackBaseOptions[], browser: any) => {
     for (let track of tracks) {
         //take toJSON function 
         //maybe change type to allow reader
@@ -18,9 +18,10 @@ export const loadServiceTracks = (tracks: TrackBaseOptions[], browser: any) => {
             track: track.id,
           });
         }
-
-        if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null){ // does it match bedX+Y?
-          track.decode = decodeBedXY
+        if("format" in track){
+          if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null){ // does it match bedX+Y?
+            track.decode = decodeBedXY
+          }
         }
         // load
         browser.loadTrack(track)

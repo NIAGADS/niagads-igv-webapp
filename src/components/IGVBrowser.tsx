@@ -9,9 +9,10 @@ import {
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack, loadServiceTracks } from "@utils/index";
+import { resolveTrackReader, loadTrack, loadConfigTracks, removeAllTracks } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
+import SaveSession from "./SaveSession";
 
 
 export const DEFAULT_FLANK = 1000;
@@ -63,7 +64,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   useEffect(() => {
     if (browserIsLoaded && memoOptions) {
     // function that takes tracks and the` browser 
-      loadServiceTracks(tracks, browser)
+      loadConfigTracks(tracks, browser)
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
@@ -108,27 +109,30 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(sessionJSON){
-      //remove service tracks from session
-      //call loadSession without serviceTracks
-      //call loadService tracks with the original sessionJSON
+      
 
-      //standardSession is the session without service tracks
-      let standardSession: Session  = JSON.parse(JSON.stringify(sessionJSON))
-      standardSession.tracks = standardSession.tracks.filter(track => !(track.type.includes("_service")))
-
-
-      standardSession.reference = memoOptions.reference
-      browser.loadSession(standardSession)
+      browser.removeAllTracks()
 
       sessionJSON.tracks = sessionJSON.tracks.filter(track => !(track.type === "sequence"))
-      loadServiceTracks(sessionJSON.tracks, browser)
+
+      loadConfigTracks(sessionJSON.tracks, browser)
 
     }
   }, [sessionJSON])
 
+  const handleSave = () => {
+    if(browserIsLoaded){
+
+    }
+    else{
+      alert("Wait until the browser is loade before saving")
+    }
+  }
+
   return (
     <div>
       <LoadSession setSessionJSON={setSessionJSON}/>
+      <SaveSession handleSave={handleSave}/>
       <span style={{ width: "100%" }} id="genome-browser" />
     </div>
   );
