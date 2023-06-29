@@ -17,11 +17,24 @@ export interface TrackBaseOptions {
     minHeight?: number;
     maxHeight?: number;
     order?: number;
-    color?: string; //if a function don't export 
+    color?: string; //if a function, don't export 
     
-    // IGV options IGVTrackOptions
-    queryable?: boolean //out
+    //IGVTrackOptions
+    queryable?: boolean
     removable?: boolean;
-    reader?: any; //out
-    decode?: any; //out
+    reader?: any;
+    decode?: any;
+}
+
+export interface IGVTrackOptions extends TrackBaseOptions {
+    
+}
+
+export interface Session {
+    tracks: TrackBaseOptions[]
+
+    //TODO: currently optional because functionality isn't built yet but will be required in the future
+    reference?: any
+    roi?: any
+    locus?: any
 }

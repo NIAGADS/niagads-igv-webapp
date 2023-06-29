@@ -8,7 +8,7 @@ import {
   trackPopover
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
-import { TrackBaseOptions } from "@browser-types/tracks";
+import { Session, TrackBaseOptions } from "@browser-types/tracks";
 import { resolveTrackReader, loadTrack, loadServiceTracks } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
@@ -35,7 +35,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
-  const [sessionJSON, setSessionJSON] = useState<any>(null);
+  const [sessionJSON, setSessionJSON] = useState<Session>(null);
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -108,8 +108,21 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(sessionJSON){
-      sessionJSON.reference = memoOptions.reference
-      browser.loadSession(sessionJSON)
+      //remove service tracks from session
+      //call loadSession without serviceTracks
+      //call loadService tracks with the original sessionJSON
+
+      //standardSession is the session without service tracks
+      let standardSession  = Object.assign({}, sessionJSON)
+      standardSession.tracks = standardSession.tracks.filter(track => !(track.type.includes("_service")))
+
+
+      standardSession.reference = memoOptions.reference
+      browser.loadSession(standardSession)
+
+      sessionJSON.tracks = sessionJSON.tracks.filter(track => !(track.type === "sequence"))
+      loadServiceTracks(sessionJSON.tracks, browser)
+
     }
   }, [sessionJSON])
 
