@@ -113,7 +113,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       //call loadService tracks with the original sessionJSON
 
       //standardSession is the session without service tracks
-      let standardSession  = Object.assign({}, sessionJSON)
+      let standardSession: Session  = JSON.parse(JSON.stringify(sessionJSON))
       standardSession.tracks = standardSession.tracks.filter(track => !(track.type.includes("_service")))
 
 

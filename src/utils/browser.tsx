@@ -29,18 +29,18 @@ export const loadServiceTracks = (tracks: TrackBaseOptions[], browser: any) => {
 }
 
 
-// const loadSession = async (options) => {
+// const loadSession = async (options: any, browser: any) => {
 
 //   let session
 //   if (options.url || options.file) {
-//       session = await loadSessionFile(options)
+//       session = await loadSessionFile(options, browser)
 //   } else {
 //       session = options
 //   }
-//   return this.loadSessionObject(session)
+//   return loadSessionObject(session, browser)
 
 
-//   async function loadSessionFile(options) {
+//   async function loadSessionFile(options: any, browser: any) {
 
 //       const urlOrFile = options.url || options.file
 
@@ -69,17 +69,18 @@ export const loadServiceTracks = (tracks: TrackBaseOptions[], browser: any) => {
 //   }
 // }
 
-// const loadSessionObject = async (session) => {
+// //functions to expose: cleanHouseForSession, createColumn
+// const loadSessionObject = async (session: any, browser: any) => {
 
 //   // prepare to load a new session, discarding DOM and state
-//   this.cleanHouseForSession()
+//   cleanHouseForSession()
 
-//   this.showSampleNames = session.showSampleNames || false
-//   this.sampleNameControl.setState(this.showSampleNames === true)
+//   let showSampleNames = session.showSampleNames || false
+//   // let sampleNameControl.setState(this.showSampleNames === true)
 
-//   if (session.sampleNameViewportWidth) {
-//       this.sampleNameViewportWidth = session.sampleNameViewportWidth
-//   }
+//   // if (session.sampleNameViewportWidth) {
+//   //     let sampleNameViewportWidth = session.sampleNameViewportWidth
+//   // }
 
 //   // axis column
 //   createColumn(this.columnContainer, 'igv-axis-column')
