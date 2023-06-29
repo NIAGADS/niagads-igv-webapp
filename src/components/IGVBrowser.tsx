@@ -9,7 +9,7 @@ import {
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack, loadConfigTracks, removeAllTracks } from "@utils/index";
+import { resolveTrackReader, loadTrack, loadConfigTracks, removeAllTracks, createSessionObj, downloadObjectAsJson} from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
@@ -109,20 +109,19 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(sessionJSON){
-      
-
+      //remove the current tracks
       browser.removeAllTracks()
-
+      //filter out the sequence track
       sessionJSON.tracks = sessionJSON.tracks.filter(track => !(track.type === "sequence"))
-
+      //load the tracks
       loadConfigTracks(sessionJSON.tracks, browser)
-
     }
   }, [sessionJSON])
 
   const handleSave = () => {
     if(browserIsLoaded){
-
+      let sessionObj = createSessionObj(tracks, memoOptions.reference)
+      downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session")
     }
     else{
       alert("Wait until the browser is loade before saving")
