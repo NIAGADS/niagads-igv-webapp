@@ -36,8 +36,16 @@ export const createSessionObj = (tracks: TrackBaseOptions[]): Session => {
   let sessionObj: Session = {
     tracks: tracks,
     roi: [],
-    locus: "all",
+    locus: "chr19:1,038,997-1,066,572",
   }
 
   return sessionObj
+}
+
+export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: any) => {
+  for(let track of tracks) {
+    if(track.id !== "REFSEQ_GENE" && track.id !== "ENSEMBL_GENE"){
+      browser.removeTrackByName(track.name)
+    }
+  }
 }

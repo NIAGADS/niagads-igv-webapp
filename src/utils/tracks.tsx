@@ -34,9 +34,3 @@ export const resolveTrackReader = (trackType: string, config: any): any => {
             return null;
     }
 };
-
-export const removeAllTracks = (tracks: TrackBaseOptions[], browser: any) => {
-    for(let track of tracks) {
-        browser.removeTrack(track)
-    }
-}

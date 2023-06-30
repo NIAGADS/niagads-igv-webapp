@@ -9,7 +9,7 @@ import {
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack, loadConfigTracks, removeAllTracks, createSessionObj, downloadObjectAsJson} from "@utils/index";
+import { resolveTrackReader, loadTrack, loadConfigTracks, createSessionObj, downloadObjectAsJson, removeNonReferenceTracks} from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
@@ -109,10 +109,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(sessionJSON){
-      //remove the current tracks
-      browser.removeAllTracks()
-      //load the new reference
-      browser.loadGenome(memoOptions.reference)
+      //remove all the non-reference tracks
+      removeNonReferenceTracks(tracks, browser)
       //filter out the sequence track
       sessionJSON.tracks = sessionJSON.tracks.filter(track => !(track.type === "sequence"))
       //load the tracks
