@@ -111,6 +111,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     if(sessionJSON){
       //remove the current tracks
       browser.removeAllTracks()
+      //load the new reference
+      browser.loadGenome(memoOptions.reference)
       //filter out the sequence track
       sessionJSON.tracks = sessionJSON.tracks.filter(track => !(track.type === "sequence"))
       //load the tracks
@@ -120,7 +122,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   const handleSave = () => {
     if(browserIsLoaded){
-      let sessionObj = createSessionObj(tracks, memoOptions.reference)
+      let sessionObj = createSessionObj(tracks)
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session")
     }
     else{

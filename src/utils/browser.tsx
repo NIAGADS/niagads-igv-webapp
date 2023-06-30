@@ -9,27 +9,26 @@ export const loadTrack = async (config: any, browser: any) => {
 };
 
 export const loadConfigTracks = (tracks: TrackBaseOptions[], browser: any) => {
-    for (let track of tracks) {
-        //take toJSON function 
-        //maybe change type to allow reader
-        if (track.type.includes("_service")) {
-          track.reader = resolveTrackReader(track.type, {
-            endpoint: track.url,
-            track: track.id,
-          });
+  for (let track of tracks) {
+      //take toJSON function 
+      //maybe change type to allow reader
+      if (track.type.includes("_service")) {
+        track.reader = resolveTrackReader(track.type, {
+          endpoint: track.url,
+          track: track.id,
+        });
+      }
+      if("format" in track){
+        if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null){ // does it match bedX+Y?
+          track.decode = decodeBedXY
         }
-        if("format" in track){
-          if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null){ // does it match bedX+Y?
-            track.decode = decodeBedXY
-          }
-        }
-        // load
-        browser.loadTrack(track)
-        
-    }
+      }
+      // load
+      browser.loadTrack(track)
+  }
 }
 
-export const createSessionObj = (tracks: TrackBaseOptions[], reference: any): Session => {
+export const createSessionObj = (tracks: TrackBaseOptions[]): Session => {
   
   tracks = tracks.filter(track => !(track.id === "reference"))
 
@@ -38,7 +37,6 @@ export const createSessionObj = (tracks: TrackBaseOptions[], reference: any): Se
     tracks: tracks,
     roi: [],
     locus: "all",
-    reference: reference
   }
 
   return sessionObj
