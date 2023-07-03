@@ -1,4 +1,4 @@
-import { Session, TrackBaseOptions } from "@browser-types/tracks";
+import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/tracks";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader } from "./tracks";
 
@@ -9,7 +9,7 @@ export const loadTrack = async (config: any, browser: any) => {
 };
 
 export const loadConfigTracks = (tracks: TrackBaseOptions[], browser: any) => {
-  for (let track of tracks) {
+  for (let track of tracks as IGVTrackOptions[]) {
       //take toJSON function 
       //maybe change type to allow reader
       if (track.type.includes("_service")) {
