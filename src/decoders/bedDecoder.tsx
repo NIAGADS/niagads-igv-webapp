@@ -1,4 +1,4 @@
-import { ignoreCaseIndexOf } from "@utils/index";
+import { ignoreCaseIndexOf, isSimpleType, capitalize, numberFormatter, snakeToProperCase } from "@utils/index";
 import igv from "igv/dist/igv.esm";
 
 const EXPECTED_BED_FIELDS = ["chr", "start", "end", "name", "score", "strand", "cdStart", 
@@ -34,7 +34,59 @@ export function decodeBedXY(tokens: any, header: any) {
 
     feature = parsePValues(feature, tokens, header.columnNames)
 
+    feature.setAdditionalAttributes({"popupData": extractPopupData})
+
     return feature
+}
+
+function extractPopupData(genomeId: any){
+    //@ts-ignore
+    const feature: BedXYFeature = this
+
+    const filteredProperties = new Set(['row', 'color', 'chr', 'start', 'end', 'cdStart', 'cdEnd', 'strand', 'alpha']);
+    const data = [];
+
+    for (let property in feature) {
+
+        if (feature.hasOwnProperty(property) &&
+            !filteredProperties.has(property) &&
+            isSimpleType(feature[property])) {
+
+            let value = feature[property];
+            data.push({name: capitalize(property), value: value});
+
+            //removed alleles code
+        }
+        //If it's the info object
+        else if (feature.hasOwnProperty(property) && 
+        property === "info") {
+            //iterate over info and add it to data
+            for(let infoProp in feature[property]) {
+                let value = feature[property][infoProp]
+                let name = snakeToProperCase(infoProp)
+                data.push({name: name, value: value})
+            }
+        }
+    }
+
+    //not sure if we need this
+    if (feature.attributes) {
+        for (let key of Object.keys(feature.attributes)) {
+            data.push({name: key, value: feature.attributes[key]})
+        }
+    }
+
+    //also not sure if we need this
+    // final chr position
+    let posString = `${feature.chr}:${numberFormatter(feature.start + 1)}-${numberFormatter(feature.end)}`
+    if (feature.strand) {
+        posString += ` (${feature.strand})`
+    }
+
+    data.push({name: 'Location', value: posString})
+
+    return data
+
 }
 
 function parseBedToken(field: string, token: string) {
@@ -124,6 +176,7 @@ class BedXYFeature {
     end: number;
     score: number;
     info: any;
+    [key: string]: any;
 
     constructor(chr: string, start: number, end: number, score=1000) {
         this.start = start;
