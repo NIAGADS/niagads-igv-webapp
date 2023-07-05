@@ -9,6 +9,7 @@ export const  downloadObjectAsJson = (exportObj: any, exportName: string) => {
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+}
 export const ignoreCaseIndexOf = (arr: any[], lookup: any) => arr.findIndex(item => lookup.toLowerCase() === item.toLowerCase());
 
 export const isSimpleType = (value: any) => {
