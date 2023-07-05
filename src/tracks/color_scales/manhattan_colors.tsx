@@ -1,10 +1,10 @@
-// from https://raw.githubusercontent.com/igvteam/igv.js/master/js/gwas/gwasColors.js
 
 /**
  * Colors used for coding chromosomes
+ * adapted from https://raw.githubusercontent.com/igvteam/igv.js/master/js/gwas/gwasColors.js
  */
 
-const GWASColors = {
+const ManhattanColors = {
     "X": "rgb(204, 153, 0)",
     "Y": "rgb(153, 204, 0)",
     "Un": "darkGray)",
@@ -61,20 +61,22 @@ const GWASColors = {
 }
 
 //  aliasing
-for (let key of Object.keys(GWASColors)) {
+for (let key of Object.keys(ManhattanColors)) {
     const altName = "chr" + key
-    GWASColors[altName] = GWASColors[key]
+    //@ts-ignore
+    ManhattanColors[altName] = ManhattanColors[key]
 }
 
 // romanizing
 for(let a = 1; a <= 48; a++) {
     if(a === 10) continue   // Don't overide "X"
     const roman = romanize(a)
-    GWASColors[roman] = GWASColors[a.toString()]
+    // @ts-ignore
+    ManhattanColors[roman] = ManhattanColors[a.toString()]
 }
 
 
-function romanize (num) {
+function romanize (num: any) {
     if (!+num) return false;
     var digits = String(+num).split('');
     var key = ['','C','CC','CCC','CD','D','DC','DCC','DCCC','CM',
@@ -85,4 +87,4 @@ function romanize (num) {
     return Array(+digits.join('') + 1).join('M') + roman;
 }
 
-export default GWASColors
+export default ManhattanColors
