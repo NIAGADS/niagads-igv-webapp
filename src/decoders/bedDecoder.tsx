@@ -39,7 +39,7 @@ export function decodeBedXY(tokens: any, header: any) {
     return feature
 }
 
-function extractPopupData(genomeId: any){
+function extractPopupData(genomeId: any) {
     //@ts-ignore
     const feature: BedXYFeature = this
 
@@ -69,14 +69,6 @@ function extractPopupData(genomeId: any){
         }
     }
 
-    //not sure if we need this
-    if (feature.attributes) {
-        for (let key of Object.keys(feature.attributes)) {
-            data.push({name: key, value: feature.attributes[key]})
-        }
-    }
-
-    //also not sure if we need this
     // final chr position
     let posString = `${feature.chr}:${numberFormatter(feature.start + 1)}-${numberFormatter(feature.end)}`
     if (feature.strand) {
