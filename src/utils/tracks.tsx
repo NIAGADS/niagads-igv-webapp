@@ -2,6 +2,7 @@ import get from "lodash.get";
 import { ALWAYS_ON_TRACKS } from "@data/_constants";
 import VariantServiceReader  from "@readers/VariantServiceReader"
 import GWASServiceReader from "@readers/GWASServiceReader"
+import { TrackBaseOptions } from "@browser-types/tracks";
 
 export const getTrackID = (trackView: any) => {
     const track = trackView.track;

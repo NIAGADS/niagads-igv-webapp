@@ -2,15 +2,6 @@ import { TrackBaseOptions } from "@browser-types/tracks";
 
 export const config: TrackBaseOptions[] = [
   {
-    name: "FILER parsing test: narrowpeak / no header",
-    description: "testing bigBed, as filer bed",
-    id: "narrowpeak_TEST",
-    type: "annotation",
-    format: "narrowpeak",
-    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz",
-    indexURL: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz.tbi"
-  },
-  {
     name: "GTEx Whole Blood eQTL",
     type: "annotation",
     format: "bed6+13",
@@ -18,18 +9,6 @@ export const config: TrackBaseOptions[] = [
     id: "EQTL_TEST",
     url: "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz",
     indexURL: "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz.tbi",
-  },
-  {
-    url: "/service/track/variant",
-    name: "ADSK 17K R3 Variants",
-    type: "variant_service",
-    format: "webservice",
-    visibilityWindow: 1000000,
-    queryable: true,
-    description:
-      "Variants from the Alzheimer''s Disease Sequencing Project (ADSP) 17K R3 whole genome sequencing effort - INDELs and SNVs that passed the ADSP biallelic quality control (QC) criteria. Variants are annotated by the ADSP Annotation Pipeline.",
-    id: "ADSP_17K",
-    order: 1,
   },
   {
     description:

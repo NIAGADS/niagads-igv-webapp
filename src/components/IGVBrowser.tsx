@@ -8,9 +8,11 @@ import {
   trackPopover
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
-import { TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack } from "@utils/index";
+import { Session, TrackBaseOptions } from "@browser-types/tracks";
+import { resolveTrackReader, loadTrack, loadTracks, createSessionObj, downloadObjectAsJson, removeNonReferenceTracks, getLoadedTracks, removeTrackById} from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
+import LoadSession from "./LoadSession";
+import SaveSession from "./SaveSession";
 
 
 export const DEFAULT_FLANK = 1000;
@@ -34,6 +36,9 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
+  //set to tracks
+  //any useEffect dependant on tracks must take sessionJSON instead
+  const [sessionJSON, setSessionJSON] = useState<Session>({tracks: tracks});
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -59,25 +64,18 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   }, [genome, locus]);
 
   useEffect(() => {
-    if (browserIsLoaded && memoOptions) {
-      for (let track of tracks) {
-        // if a service track, assign the reader
-        if (track.type.includes("_service")) {
-          track.reader = resolveTrackReader(track.type, {
-            endpoint: track.url,
-            track: track.id,
-          });
+    if (browserIsLoaded && memoOptions && sessionJSON) {
+      const loadedTracks = getLoadedTracks(browser)
+      //remove
+      if(Object.keys(loadedTracks).length !== 0){
+        for(let id of loadedTracks){
+          removeTrackById(id, browser)
         }
-
-        if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null){ // does it match bedX+Y?
-          track.decode = decodeBedXY
-        }
-        // load
-        browser.loadTrack(track)
-        
       }
+      //loadTracks from sessionJSON
+      loadTracks(sessionJSON.tracks, browser)
     }
-  }, [browserIsLoaded, memoOptions, tracks]);
+  }, [browserIsLoaded, memoOptions, sessionJSON]);
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
@@ -118,8 +116,25 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [onBrowserLoad, memoOptions]);
 
-  return <span style={{ width: "100%" }} id="genome-browser" />;
-};
+  //rearrange
+  const handleSave = () => {
+    if(browserIsLoaded){
+      let sessionObj = createSessionObj(tracks)
+      downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session")
+    }
+    else{
+      alert("Wait until the browser is loaded before saving")
+    }
+  }
+
+  return (
+    <>
+      <LoadSession setSessionJSON={setSessionJSON}/>
+      <SaveSession handleSave={handleSave}/>
+      <span style={{ width: "100%" }} id="genome-browser" />
+    </>
+  );
+};  
 
 export const MemoIGVBrowser = React.memo(IGVBrowser);
 export default IGVBrowser;

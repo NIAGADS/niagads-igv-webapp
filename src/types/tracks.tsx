@@ -13,15 +13,27 @@ export interface TrackBaseOptions {
     height?: string;
     visibilityWindow?: number;
     oauthToken?: any;
-    queryable?: boolean
-    removable?: boolean;
     autoHeight?: boolean;
     minHeight?: number;
     maxHeight?: number;
     order?: number;
-    color?: string;
-    
-    // IGV options
+    color?: string; //if a function, don't export 
+
+    queryable?: boolean
+}
+
+export interface IGVTrackOptions extends TrackBaseOptions {
+    //IGVTrackOptions
+    removable?: boolean;
     reader?: any;
     decode?: any;
+}
+
+export interface Session {
+    tracks: TrackBaseOptions[]
+
+    //TODO: currently optional because functionality isn't built yet but will be required in the future
+    reference?: any
+    roi?: any
+    locus?: any
 }
