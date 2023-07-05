@@ -1,14 +1,15 @@
 // modified from https://github.com/igvteam/igv.js/tree/master/js/gwas/gwasTrack.js
+// adapted to plot anything w/a p-value (e.g., xQTL as well as GWAS summary statistics)
 
 import igv from "igv/dist/igv.esm";
-import gwasColors from "./gwasColors"
+import { ManhattanColors } from "@tracks/color_scales"
 import { FEATURE_INFO_BASE_URL } from "@data/_constants";
 
 const DEFAULT_POPOVER_WINDOW = 100000000
 
 //const type = "gwas";
 
-class GWASServiceTrack extends igv.TrackBase {
+class VariantPValueTrack extends igv.TrackBase {
 
     constructor(config: any, browser: any) {
         super(config, browser)
@@ -33,8 +34,7 @@ class GWASServiceTrack extends igv.TrackBase {
             new igv.ConstantColorScale(config.color) :
             {
                 "*": new igv.BinnedColorScale(config.colorScale || {
-                    //thresholds: [this.minThreshold, 5e-8, 1e-6, 0.5],
-                    //colors: ["rgb(16,151,230)", "rgb(0,104,55)", "rgb(255,166,0)", "rgb(251,170,170)", "rgb(227,238,249)"],
+                    // -log10p of [.5, 1e-3, 1e-6, 5e-8]
                     thresholds: [0.3, 3, 6, 7.3, this.maxValue],
                     colors: ["rgb(227,238,249)", "rgb(251,170,170)", "rgb(245, 12, 12)", "rgb(255,166,0)", "rgb(20, 186, 59)", "rgb(16,151,230)"]
                 })
@@ -119,7 +119,7 @@ class GWASServiceTrack extends igv.TrackBase {
             let cs = this.colorScales[chr]
             if (!cs) {
                 //@ts-ignore
-                const color = gwasColors[chr] || igv.randomColorPalette()
+                const color = ManhattanColors[chr] || igv.randomColorPalette()
                 cs = new igv.ConstantColorScale(color)
                 this.colorScales[chr] = cs
             }
@@ -219,5 +219,5 @@ class GWASServiceTrack extends igv.TrackBase {
 
 }
 
-export default GWASServiceTrack
+export default VariantPValueTrack
 

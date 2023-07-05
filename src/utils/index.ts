@@ -1,2 +1,29 @@
 export * from "./tracks"
 export * from "./browser"
+
+export const ignoreCaseIndexOf = (arr: any[], lookup: any) => arr.findIndex(item => lookup.toLowerCase() === item.toLowerCase());
+
+export const isSimpleType = (value: any) => {
+    const simpleTypes = new Set(["boolean", "number", "string", "symbol"])
+    const valueType = typeof value
+    return (value !== undefined && (simpleTypes.has(valueType) || value.substring || value.toFixed))
+}
+
+export const capitalize = (str: string) => {
+    return str.length > 0 ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+}
+
+export const numberFormatter = (rawNumber: number) => {
+
+    var dec = String(rawNumber).split(/[.,]/),
+        sep = ',',
+        decsep = '.';
+
+    return dec[0].split('').reverse().reduce(function (prev, now, i) {
+        return i % 3 === 0 ? prev + sep + now : prev + now;
+    }).split('').reverse().join('') + (dec[1] ? decsep + dec[1] : '');
+}
+
+export const snakeToProperCase = (str: string) => {
+    return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+}

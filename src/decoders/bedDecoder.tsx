@@ -1,7 +1,11 @@
+import { ignoreCaseIndexOf, isSimpleType, capitalize, numberFormatter, snakeToProperCase } from "@utils/index";
 import igv from "igv/dist/igv.esm";
 
 const EXPECTED_BED_FIELDS = ["chr", "start", "end", "name", "score", "strand", "cdStart", 
     "cdEnd", "color", "blockCount", "blockSizes", "blockStarts"]
+
+// make column name lower then comapare
+const P_VALUE_FIELDS = ["pvalue", "p-value",  "pval", "p_value"] //TODO: check nominal pvalue
 
 export function decodeBedXY(tokens: any, header: any) {
 
@@ -28,7 +32,53 @@ export function decodeBedXY(tokens: any, header: any) {
     // parse optional columns
     parseOptionalFields(feature, tokens, X, header.columnNames)
 
+    feature = parsePValues(feature, tokens, header.columnNames)
+
+    feature.setAdditionalAttributes({"popupData": extractPopupData})
+
     return feature
+}
+
+function extractPopupData(genomeId: any) {
+    //@ts-ignore
+    const feature: BedXYFeature = this
+
+    const filteredProperties = new Set(['row', 'color', 'chr', 'start', 'end', 'cdStart', 'cdEnd', 'strand', 'alpha']);
+    const data = [];
+
+    for (let property in feature) {
+
+        if (feature.hasOwnProperty(property) &&
+            !filteredProperties.has(property) &&
+            isSimpleType(feature[property])) {
+
+            let value = feature[property];
+            data.push({name: capitalize(property), value: value});
+
+            //removed alleles code
+        }
+        //If it's the info object
+        else if (feature.hasOwnProperty(property) && 
+        property === "info") {
+            //iterate over info and add it to data
+            for(let infoProp in feature[property]) {
+                let value = feature[property][infoProp]
+                let name = snakeToProperCase(infoProp)
+                data.push({name: name, value: value})
+            }
+        }
+    }
+
+    // final chr position
+    let posString = `${feature.chr}:${numberFormatter(feature.start + 1)}-${numberFormatter(feature.end)}`
+    if (feature.strand) {
+        posString += ` (${feature.strand})`
+    }
+
+    data.push({name: 'Location', value: posString})
+
+    return data
+
 }
 
 function parseBedToken(field: string, token: string) {
@@ -93,6 +143,24 @@ function parseOptionalFields(feature: BedXYFeature, tokens: any, X:number, colum
     return
 }
 
+function parsePValues(feature: BedXYFeature, tokens: any, columnNames: string[]) {
+    for(let field of P_VALUE_FIELDS) {
+        let pIndex = ignoreCaseIndexOf(columnNames, field)
+        if(pIndex !== -1) {
+            let pValue = parseFloat(tokens[pIndex])
+            let neg_log10_pvalue = -1 * (Math.log10(pValue))
+
+            feature.setAdditionalAttributes({
+                "pvalue": pValue,
+                "neg_log10_pvalue": neg_log10_pvalue
+            })
+
+            return feature
+        }
+    }
+    return feature
+}
+
 
 class BedXYFeature {
     chr: string;
@@ -100,6 +168,7 @@ class BedXYFeature {
     end: number;
     score: number;
     info: any;
+    [key: string]: any;
 
     constructor(chr: string, start: number, end: number, score=1000) {
         this.start = start;
