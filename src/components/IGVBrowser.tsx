@@ -9,7 +9,7 @@ import {
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack, loadConfigTracks, createSessionObj, downloadObjectAsJson, removeNonReferenceTracks} from "@utils/index";
+import { resolveTrackReader, loadTrack, loadTracks, createSessionObj, downloadObjectAsJson, removeNonReferenceTracks, getLoadedTracks, removeTrackById} from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
@@ -38,7 +38,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   const [browser, setBrowser] = useState<any>(null);
   //set to tracks
   //any useEffect dependant on tracks must take sessionJSON instead
-  const [sessionJSON, setSessionJSON] = useState<Session>(null);
+  const [sessionJSON, setSessionJSON] = useState<Session>({tracks: tracks});
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -64,14 +64,18 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   }, [genome, locus]);
 
   useEffect(() => {
-    if (browserIsLoaded && memoOptions) {
-    //getLoadedTracks
-    //remove
+    if (browserIsLoaded && memoOptions && sessionJSON) {
+      const loadedTracks = getLoadedTracks(browser)
+      //remove
+      if(Object.keys(loadedTracks).length !== 0){
+        for(let id of loadedTracks){
+          removeTrackById(id, browser)
+        }
+      }
       //loadTracks from sessionJSON
-      loadConfigTracks(tracks, browser)
+      loadTracks(sessionJSON.tracks, browser)
     }
-    //session json
-  }, [browserIsLoaded, memoOptions, tracks]);
+  }, [browserIsLoaded, memoOptions, sessionJSON]);
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {

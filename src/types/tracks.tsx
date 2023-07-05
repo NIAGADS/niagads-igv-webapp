@@ -18,11 +18,12 @@ export interface TrackBaseOptions {
     maxHeight?: number;
     order?: number;
     color?: string; //if a function, don't export 
+
+    queryable?: boolean
 }
 
 export interface IGVTrackOptions extends TrackBaseOptions {
     //IGVTrackOptions
-    queryable?: boolean
     removable?: boolean;
     reader?: any;
     decode?: any;

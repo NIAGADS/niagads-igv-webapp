@@ -1,18 +1,18 @@
 import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/tracks";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader } from "./tracks";
+import { get } from "lodash"
+
+const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE"];
 
 // functions for maninpulating IGV browser object
-
 export const loadTrack = async (config: any, browser: any) => {
     await browser.loadTrack(config);
 };
 
-//loadTracks
-export const loadConfigTracks = (tracks: TrackBaseOptions[], browser: any) => {
+export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
   for (let track of tracks as IGVTrackOptions[]) {
-      //take toJSON function 
-      //maybe change type to allow reader
+
       if (track.type.includes("_service")) {
         track.reader = resolveTrackReader(track.type, {
           endpoint: track.url,
