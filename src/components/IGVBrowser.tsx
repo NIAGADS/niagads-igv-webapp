@@ -36,6 +36,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
+  //set to tracks
+  //any useEffect dependant on tracks must take sessionJSON instead
   const [sessionJSON, setSessionJSON] = useState<Session>(null);
 
   const memoOptions: any = useMemo(() => {
@@ -63,9 +65,12 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if (browserIsLoaded && memoOptions) {
-    // function that takes tracks and the` browser 
+    //getLoadedTracks
+    //remove
+      //loadTracks from sessionJSON
       loadConfigTracks(tracks, browser)
     }
+    //session json
   }, [browserIsLoaded, memoOptions, tracks]);
 
   useLayoutEffect(() => {
@@ -107,33 +112,23 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [onBrowserLoad, memoOptions]);
 
-  useEffect(() => {
-    if(sessionJSON){
-      //remove all the non-reference tracks
-      removeNonReferenceTracks(tracks, browser)
-      //filter out the sequence track
-      sessionJSON.tracks = sessionJSON.tracks.filter(track => !(track.type === "sequence"))
-      //load the tracks
-      loadConfigTracks(sessionJSON.tracks, browser)
-    }
-  }, [sessionJSON])
-
+  //rearrange
   const handleSave = () => {
     if(browserIsLoaded){
       let sessionObj = createSessionObj(tracks)
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session")
     }
     else{
-      alert("Wait until the browser is loade before saving")
+      alert("Wait until the browser is loaded before saving")
     }
   }
 
   return (
-    <div>
+    <>
       <LoadSession setSessionJSON={setSessionJSON}/>
       <SaveSession handleSave={handleSave}/>
       <span style={{ width: "100%" }} id="genome-browser" />
-    </div>
+    </>
   );
 };  
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useRef } from "react"
 
-export default function LoadSession(props: any) {
+export default function LoadSessionButton(props: any) {
     const fileRef = useRef(null)
 
-    const handleLoadSessionClick = () => {
+    const handleClick = () => {
         fileRef.current.click();
     }
 
@@ -36,7 +36,7 @@ export default function LoadSession(props: any) {
                 style={{display: 'none'}}
                 onChange={handleFileChange}
             ></input>
-            <button onClick={handleLoadSessionClick}>Load Session</button>
+            <button onClick={handleClick}>Load Session</button>
         </div>
     )
 }

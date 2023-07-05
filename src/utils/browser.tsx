@@ -8,6 +8,7 @@ export const loadTrack = async (config: any, browser: any) => {
     await browser.loadTrack(config);
 };
 
+//loadTracks
 export const loadConfigTracks = (tracks: TrackBaseOptions[], browser: any) => {
   for (let track of tracks as IGVTrackOptions[]) {
       //take toJSON function 
