@@ -19,8 +19,8 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
           track: track.id,
         });
       }
-      if("format" in track){
-        if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null){ // does it match bedX+Y?
+      if("format" in track) {
+        if(track.format.match("^bed\\d{1,2}\\+\\d+$") != null) { // does it match bedX+Y?
           track.decode = decodeBedXY
         }
       }
@@ -29,9 +29,20 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
   }
 }
 
-export const createSessionObj = (tracks: TrackBaseOptions[]): Session => {
+export const createSessionSaveObj = (tracks: TrackBaseOptions[]): Session => {
+
+  //remove sequence
+  tracks = tracks.filter(track => !(track.type !== "sequence"))
   
+  //remove refereence object
   tracks = tracks.filter(track => !(track.id === "reference"))
+
+  //remove any functions
+  for(let track of tracks) {
+    for(let prop in track) {
+      if(typeof prop === 'function') delete track[prop];
+    }
+  }
 
   //TODO: locus and roi are currently set to default values
   let sessionObj: Session = {

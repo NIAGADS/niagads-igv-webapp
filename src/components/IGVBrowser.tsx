@@ -9,7 +9,7 @@ import {
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack, loadTracks, createSessionObj, downloadObjectAsJson, removeNonReferenceTracks, getLoadedTracks, removeTrackById} from "@utils/index";
+import { resolveTrackReader, loadTrack, loadTracks, createSessionSaveObj, downloadObjectAsJson, removeNonReferenceTracks, getLoadedTracks, removeTrackById} from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
@@ -119,7 +119,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   //rearrange
   const handleSave = () => {
     if(browserIsLoaded){
-      let sessionObj = createSessionObj(tracks)
+      let sessionObj = createSessionSaveObj(sessionJSON.tracks)
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session")
     }
     else{
