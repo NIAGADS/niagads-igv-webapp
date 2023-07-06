@@ -82,37 +82,48 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       console.log(event);
     });
 
-    const targetDiv = document.getElementById("genome-browser");
-    if (memoOptions != null) {
-      igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
-        // browser is initialized and can now be used
+    //if sessionStorage call browser.loadSession with all the info
+    if(sessionStorage.length){
+      const browser: any = JSON.parse(sessionStorage.getItem("browser"));
+      const sessionObj = JSON.parse(sessionStorage.getItem("session"));
+      browser.loadSessionObject(sessionObj)
+    } 
+    else {
 
-        // custom track popovers
-        browser.on("trackclick", trackPopover);
+      const targetDiv = document.getElementById("genome-browser");
+      if (memoOptions != null) {
+        igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
+          // browser is initialized and can now be used
 
-        // perform action in encapsulating component if track is removed
-        browser.on("trackremoved", function (track: any) {
-          onTrackRemoved && onTrackRemoved(track.config.id);
+          // custom track popovers
+          browser.on("trackclick", trackPopover);
+
+          // perform action in encapsulating component if track is removed
+          browser.on("trackremoved", function (track: any) {
+            onTrackRemoved && onTrackRemoved(track.config.id);
+          });
+
+          // add custom track types to track factory
+          browser.addTrackToFactory(
+            "gwas_service",
+            (config: any, browser: any) => new VariantPValueTrack(config, browser)
+          );
+
+          browser.addTrackToFactory(
+            "variant_service",
+            (config: any, browser: any) => new VariantTrack(config, browser)
+          );
+
+          // add browser to state
+          setBrowser(browser);
+          setBrowserIsLoaded(true);
+
+          // callback to parent component, if exist
+          onBrowserLoad ? onBrowserLoad(browser) : noop();
+          sessionStorage.setItem("browser", JSON.stringify(browser))
+          sessionStorage.setItem("session", JSON.stringify(createSessionObj(sessionJSON.tracks)))
         });
-
-        // add custom track types to track factory
-        browser.addTrackToFactory(
-          "gwas_service",
-          (config: any, browser: any) => new VariantPValueTrack(config, browser)
-        );
-
-        browser.addTrackToFactory(
-          "variant_service",
-          (config: any, browser: any) => new VariantTrack(config, browser)
-        );
-
-        // add browser to state
-        setBrowser(browser);
-        setBrowserIsLoaded(true);
-
-        // callback to parent component, if exist
-        onBrowserLoad ? onBrowserLoad(browser) : noop();
-      });
+      }
     }
   }, [onBrowserLoad, memoOptions]);
 

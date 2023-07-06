@@ -1,7 +1,6 @@
 import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/tracks";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader } from "./tracks";
-import { get } from "lodash"
 
 const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE"];
 
