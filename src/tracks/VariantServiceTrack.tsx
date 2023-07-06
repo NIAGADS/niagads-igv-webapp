@@ -526,7 +526,6 @@ class VariantServiceTrack extends igv.TrackBase {
                         });
                     }
                 }
-                if(this.type === "eqtl") popupData.push({name: 'gene', value: call.gene})
             }
         }
         return popupData;

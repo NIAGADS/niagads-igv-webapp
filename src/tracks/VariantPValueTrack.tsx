@@ -41,6 +41,7 @@ class VariantPValueTrack extends igv.TrackBase {
             }
 
         this.featureSource = igv.FeatureSource(config, this.browser.genome)
+        this.type = config.type || "variant"
     }
 
     async postInit() {
@@ -187,6 +188,7 @@ class VariantPValueTrack extends igv.TrackBase {
                         data.push({name: 'Variant:', html: `<a target="_blank" href="${href}">${f.variant}</a>`, title: "View GenomicsDB record for variant " + f.variant})
                         data.push({name: 'Location:', value: f.chr + ':' + pos})
                         data.push({name: 'p-Value:', value: f.pvalue})  
+                        if(this.type === "eqtl") data.push({name: 'gene', value: f.gene})
                     }
                     count++
                 }

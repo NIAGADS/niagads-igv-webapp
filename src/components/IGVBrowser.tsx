@@ -109,8 +109,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         );
 
         browser.addTrackToFactory(
-          "variant_servce",
-          (config: any, browser: any) => new VariantTrack(config, browser)
+          "eqtl",
+          (config: any, browser: any) => new VariantPValueTrack(config, browser)
         )
 
         // add browser to state
