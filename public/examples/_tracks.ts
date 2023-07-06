@@ -12,7 +12,7 @@ export const config: TrackBaseOptions[] = [
   },
   {
     name: "GTEx Whole Blood eQTL",
-    type: "annotation",
+    type: "eqtl",
     format: "bed6+13",
     description: "test track; only has data in ABCA7 region",
     id: "EQTL_TEST",
