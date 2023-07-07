@@ -66,6 +66,7 @@ function extractPopupData(genomeId: any) {
                 let name = snakeToProperCase(infoProp)
                 data.push({name: name, value: value})
             }
+            parseGeneInfo(data)
         }
     }
 
@@ -79,6 +80,29 @@ function extractPopupData(genomeId: any) {
 
     return data
 
+}
+
+function parseGeneInfo(data: any) {
+    let IDStatus = false;
+    let symbolStatus = false;
+    for(let field of data){
+        //as far as I could tell the only terminology used for geneId was geneId
+        //I don't know if a gene symbol isn't provided if a null field should be added
+        let name = field.name.toLowerCase()
+        if(name === "gene" || name === "genename" || name === "targetgenesymbol"){
+            field.name = "GeneSymbol"
+            symbolStatus = true;
+        }
+        else if(name === "geneid"){
+            IDStatus = true;
+        }
+    }
+    if(!IDStatus && symbolStatus){
+        //@ts-ignore
+        let symbolField = data.find(symbol => symbol.name === "GeneSymbol")
+        symbolField.name = "GeneID";
+    }
+    return data;
 }
 
 function parseBedToken(field: string, token: string) {
