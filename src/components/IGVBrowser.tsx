@@ -13,8 +13,7 @@ import { resolveTrackReader, loadTrack, loadTracks, createSessionObj, downloadOb
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
-import useLocalStorage from "@utils/hooks/useLocalStorage";
-import { useSessionStorage } from "@utils/hooks/useSessionStorage";
+import { useSessionStorage } from 'usehooks-ts'
 
 export const DEFAULT_FLANK = 1000;
 
@@ -40,7 +39,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   //set to tracks
   //any useEffect dependant on tracks must take sessionJSON instead
   const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', {tracks: tracks});
-  // const [sessionJSON, setSessionJSON] = useLocalStorage('sessionJSON', {tracks: tracks});
 
 
   const memoOptions: any = useMemo(() => {
