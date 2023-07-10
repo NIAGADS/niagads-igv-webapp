@@ -11,9 +11,9 @@ import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
 import { resolveTrackReader, loadTrack, loadTracks, createSessionObj, downloadObjectAsJson, removeNonReferenceTracks, getLoadedTracks, removeTrackById} from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
-import LoadSession from "./LoadSession";
-import SaveSession from "./SaveSession";
 import { useSessionStorage } from 'usehooks-ts'
+import LoadSessionButton from "./LoadSessionButton";
+import SaveSessionButton from "./SaveSessionButton";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -66,7 +66,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if (browserIsLoaded && memoOptions && sessionJSON) {
-      const loadedTracks = getLoadedTracks(browser)
+      const loadedTracks: any = getLoadedTracks(browser)
       //remove
       if(Object.keys(loadedTracks).length !== 0){
         for(let id of loadedTracks){
@@ -135,8 +135,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   return (
     <>
-      <LoadSession setSessionJSON={setSessionJSON}/>
-      <SaveSession handleSave={handleSave}/>
+      <LoadSessionButton setSessionJSON={setSessionJSON}/>
+      <SaveSessionButton handleSave={handleSave}/>
       <span style={{ width: "100%" }} id="genome-browser" />
     </>
   );

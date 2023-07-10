@@ -1,6 +1,6 @@
 import React from "react"
 
-export default function SaveSession(props: any) {
+export default function SaveSessionButton(props: any) {
 
     return(
         <div>
