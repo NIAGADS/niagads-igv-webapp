@@ -29,7 +29,7 @@
     },
     "dependencies": {
         "@types/lodash.find": "^4.6.7",
-        "igv": "https://github.com/NIAGADS/igv.js.git#NIAGADS-2.13.9",
+        "igv": "https://github.com/NIAGADS/igv.js.git#NIAGADS",
         "jquery": "^3.7.0",
         "lodash.find": "^4.6.0",
         "lodash.get": "^4.4.2",

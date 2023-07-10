@@ -5,7 +5,7 @@ import find from "lodash.find";
 import {
   GWASServiceTrack as GWASTrack,
   VariantServiceTrack as VariantTrack,
-  trackPopover
+  trackPopover,
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { TrackBaseOptions } from "@browser-types/tracks";
@@ -79,7 +79,11 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     });
 
     const targetDiv = document.getElementById("genome-browser");
+
     if (memoOptions != null) {
+      igv.registerTrackClass("gwas_service", GWASTrack);
+      igv.registerTrackClass("variant_service", VariantTrack);
+
       igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
         // browser is initialized and can now be used
 
@@ -92,7 +96,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         });
 
         // add custom track types to track factory
-        browser.addTrackToFactory(
+        /*browser.addTrackToFactory(
           "gwas_service",
           (config: any, browser: any) => new GWASTrack(config, browser)
         );
@@ -100,7 +104,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.addTrackToFactory(
           "variant_service",
           (config: any, browser: any) => new VariantTrack(config, browser)
-        );
+        );*/
 
         // add browser to state
         setBrowser(browser);
