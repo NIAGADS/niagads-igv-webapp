@@ -14,6 +14,7 @@ import { decodeBedXY } from "@decoders/bedDecoder";
 import { useSessionStorage } from 'usehooks-ts'
 import LoadSessionButton from "./LoadSessionButton";
 import SaveSessionButton from "./SaveSessionButton";
+import AddTrackButton from "./AddTrackButton";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -74,7 +75,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         }
       }
       //loadTracks from sessionJSON
-      loadTracks(sessionJSON.tracks, browser)
+      loadTracks(sessionJSON.tracks, browser, )
     }
   }, [browserIsLoaded, memoOptions, sessionJSON]);
 
@@ -137,6 +138,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     <>
       <LoadSessionButton setSessionJSON={setSessionJSON}/>
       <SaveSessionButton handleSave={handleSave}/>
+      <AddTrackButton browser={browser}/>
       <span style={{ width: "100%" }} id="genome-browser" />
     </>
   );
