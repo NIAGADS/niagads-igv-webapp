@@ -31,8 +31,10 @@ export function decodeBedXY(tokens: any, header: any) {
 
     // parse optional columns
     parseOptionalFields(feature, tokens, X, header.columnNames)
-
+    //parse out P-values
     feature = parsePValues(feature, tokens, header.columnNames)
+    //parse out gene info
+    feature = parseGeneInfo(feature)
 
     feature.setAdditionalAttributes({"popupData": extractPopupData})
 
@@ -63,10 +65,9 @@ function extractPopupData(genomeId: any) {
             //iterate over info and add it to data
             for(let infoProp in feature[property]) {
                 let value = feature[property][infoProp]
-                let name = snakeToProperCase(infoProp)
+                let name = formatInfoKey(infoProp)
                 data.push({name: name, value: value})
             }
-            parseGeneInfo(data)
         }
     }
 
@@ -79,30 +80,52 @@ function extractPopupData(genomeId: any) {
     data.push({name: 'Location', value: posString})
 
     return data
-
 }
 
-function parseGeneInfo(data: any) {
+function formatInfoKey(key: string) {
+    //handle special cases
+    //should be updated as more are found
+    let result = ""
+    switch(key){
+        case "FDR":
+            result = "FDR"
+            break
+        case "qtl_dist_to_target":
+            result = "QTL dist to target"
+            break
+        case "QC_info":
+            result = "QC info" 
+            break
+        default:
+            result = key.replace(/_/g, ' ');
+            result = result.charAt(0).toUpperCase() + result.slice(1).toLowerCase();
+    }
+    
+    return result;
+}
+
+function parseGeneInfo(feature: BedXYFeature) {
     let IDStatus = false;
     let symbolStatus = false;
-    for(let field of data){
-        //as far as I could tell the only terminology used for geneId was geneId
-        //I don't know if a gene symbol isn't provided if a null field should be added
-        let name = field.name.toLowerCase()
-        if(name === "gene" || name === "genename" || name === "targetgenesymbol"){
-            field.name = "GeneSymbol"
+    for(let field in feature.info){
+        if(field === "gene" || field === "gene_name" || field === "target_gene_symbol"){
+            feature.info.gene_symbol = feature.info[field]
+            delete feature.info[field]
             symbolStatus = true;
         }
-        else if(name === "geneid"){
+        else if(field === "gene_id"){
             IDStatus = true;
         }
     }
     if(!IDStatus && symbolStatus){
+        //if there is a symbol but no id, change the symbol name to id
+        //make the symbol name field null
         //@ts-ignore
-        let symbolField = data.find(symbol => symbol.name === "GeneSymbol")
-        symbolField.name = "GeneID";
+        feature.info.gene_id = feature.info.gene_symbol
+        feature.info.gene_symbol = null
     }
-    return data;
+
+    return feature;
 }
 
 function parseBedToken(field: string, token: string) {
