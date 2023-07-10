@@ -16,7 +16,12 @@ export default function AddTrackButton(props: any) {
         reader.onload = (event: any) => {
             try{
                 const jsonObj = JSON.parse(event.target.result);
-                loadTracks(jsonObj, props.browser)
+                loadTracks(jsonObj, props.browser).then(() => {
+                    let curTracks = props.sessionJSON.tracks
+                    curTracks = curTracks.concat(jsonObj)
+                    props.setSessionJSON({tracks: curTracks})
+                })
+
             }
             catch(error) {
                 console.error(error)

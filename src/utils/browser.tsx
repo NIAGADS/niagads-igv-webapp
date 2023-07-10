@@ -9,7 +9,7 @@ export const loadTrack = async (config: any, browser: any) => {
     await browser.loadTrack(config);
 };
 
-export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
+export const loadTracks = async (tracks: TrackBaseOptions[], browser: any) => {
   for (let track of tracks as IGVTrackOptions[]) {
 
       if (track.type.includes("_service")) {
@@ -24,7 +24,7 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
         }
       }
       // load
-      browser.loadTrack(track)
+      await browser.loadTrack(track)
   }
 }
 

@@ -39,7 +39,10 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   const [browser, setBrowser] = useState<any>(null);
   //set to tracks
   //any useEffect dependant on tracks must take sessionJSON instead
-  const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', {tracks: tracks});
+  //issue is that it is not using what is saved in the session becuasue it is instead using the inital sessionLoadJSON
+  //possible solution: 
+  const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', {tracks: []});
+  const [sessionLoadJSON, setSessionLoadJSON] = useSessionStorage('sessionLoadJSON', {tracks: []})
 
 
   const memoOptions: any = useMemo(() => {
@@ -65,8 +68,23 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     };
   }, [genome, locus]);
 
+  //useEffect for initial load
   useEffect(() => {
-    if (browserIsLoaded && memoOptions && sessionJSON) {
+    if(browserIsLoaded && memoOptions){
+      //if there is something in the session, load it
+      if(sessionJSON.tracks.length !== 0){
+        const initialTracks = sessionJSON.tracks
+        loadTracks(initialTracks, browser)
+      }
+      else{
+        loadTracks(tracks, browser)
+      }
+    }
+  }, [browserIsLoaded, memoOptions])
+
+  //useEffect to run when loadTracks button is clicked
+  useEffect(() => {
+    if (browserIsLoaded && memoOptions && sessionLoadJSON.tracks.length !== 0) {
       const loadedTracks: any = getLoadedTracks(browser)
       //remove
       if(Object.keys(loadedTracks).length !== 0){
@@ -75,9 +93,20 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         }
       }
       //loadTracks from sessionJSON
-      loadTracks(sessionJSON.tracks, browser, )
+      loadTracks(sessionLoadJSON.tracks, browser).then(() => {
+        console.log("loaded tracks")
+      })
     }
-  }, [browserIsLoaded, memoOptions, sessionJSON]);
+  }, [browserIsLoaded, memoOptions, sessionLoadJSON]);
+
+  //useEffect to change sessionJSON to what's in sessionLoadJSON
+  //triggered when sessionLoadJSON changes from LoadSessionButton
+  //purpose is not trigger above useEffect when sessionJSON changes because sessionJSON is not only modified when loadSession is called
+  // useEffect(() => {
+  //   if(sessionLoadJSON){
+  //     setSessionJSON(sessionLoadJSON)
+  //   }
+  // } , [sessionLoadJSON])
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
@@ -117,8 +146,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         // callback to parent component, if exist
         onBrowserLoad ? onBrowserLoad(browser) : noop();
-        sessionStorage.setItem("browser", JSON.stringify(browser))
-        sessionStorage.setItem("session", JSON.stringify(createSessionObj(sessionJSON.tracks)))
+        // sessionStorage.setItem("browser", JSON.stringify(browser))
+        // sessionStorage.setItem("session", JSON.stringify(createSessionObj(sessionJSON.tracks)))
       });
     }
   }, [onBrowserLoad, memoOptions]);
@@ -136,7 +165,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   return (
     <>
-      <LoadSessionButton setSessionJSON={setSessionJSON}/>
+      <LoadSessionButton setSessionLoadJSON={setSessionLoadJSON}/>
       <SaveSessionButton handleSave={handleSave}/>
       <AddTrackButton browser={browser}/>
       <span style={{ width: "100%" }} id="genome-browser" />
