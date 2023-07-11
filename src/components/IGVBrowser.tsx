@@ -64,7 +64,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   }, [genome, locus]);
 
   useEffect(() => {
-    if (browserIsLoaded && memoOptions && sessionJSON) {
+    if (browserIsLoaded && memoOptions && tracks) {
       const loadedTracks = getLoadedTracks(browser)
       //remove
       if(Object.keys(loadedTracks).length !== 0){
@@ -72,10 +72,9 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           removeTrackById(id, browser)
         }
       }
-      //loadTracks from sessionJSON
-      loadTracks(sessionJSON.tracks, browser)
+      loadTracks(tracks, browser)
     }
-  }, [browserIsLoaded, memoOptions, sessionJSON]);
+  }, [browserIsLoaded, memoOptions, tracks]);
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
