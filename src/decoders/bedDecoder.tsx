@@ -56,7 +56,6 @@ function extractPopupData(genomeId: any) {
 
             let value = feature[property];
             data.push({name: capitalize(property), value: value});
-
             //removed alleles code
         }
         //If it's the info object
@@ -66,7 +65,7 @@ function extractPopupData(genomeId: any) {
             for(let infoProp in feature[property]) {
                 let value = feature[property][infoProp]
                 let name = formatInfoKey(infoProp)
-                data.push({name: name, value: value})
+                if(value) data.push({name: name, value: value})
             }
         }
     }
@@ -120,8 +119,9 @@ function parseGeneInfo(feature: BedXYFeature) {
     if(!IDStatus && symbolStatus){
         //if there is a symbol but no id, change the symbol name to id
         //make the symbol name field null
+        //gene id becomes gene
         //@ts-ignore
-        feature.info.gene_id = feature.info.gene_symbol
+        feature.info.gene = feature.info.gene_symbol
         feature.info.gene_symbol = null
     }
 
