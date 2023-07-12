@@ -15,10 +15,15 @@ export default function AddTracksButton(props: any) {
         const reader = new FileReader();
         reader.onload = (event: any) => {
             try{
+                let newTracks = null;
                 const jsonObj = JSON.parse(event.target.result);
-                loadTracks(jsonObj.tracks, props.browser)
+                //for differentiating between when a user uploads just an array of tracks
+                // vs. a session that is an object with a prpoerty "tracks"
+                if(jsonObj.hasOwnProperty("tracks")) newTracks = jsonObj.tracks
+                else newTracks = jsonObj
+                loadTracks(newTracks, props.browser)
                 let curTracks = props.sessionJSON.tracks
-                curTracks = curTracks.concat(jsonObj.tracks)
+                curTracks = curTracks.concat(newTracks)
                 props.setSessionJSON({tracks: curTracks})
             }
             catch(error) {
@@ -40,7 +45,7 @@ export default function AddTracksButton(props: any) {
                 style={{display: 'none'}}
                 onChange={handleFileChange}
             ></input>
-            <button onClick={handleClick}>Add New Track</button>
+            <button onClick={handleClick}>Add New Tracks</button>
         </div>
     )
 }
