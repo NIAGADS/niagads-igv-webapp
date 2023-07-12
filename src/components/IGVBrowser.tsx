@@ -28,7 +28,7 @@ interface IGVBrowserProps {
   featureSearchUrl: string;
   genome: string;
   locus?: string;
-  onTrackRemoved?: (track: string) => void;
+  onTrackRemoved?: (track: string, sessionJSON:Session, setSessionJSON: any) => void;
   onBrowserLoad?: (Browser: any) => void;
   tracks: TrackBaseOptions[];
 }
@@ -100,7 +100,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         // perform action in encapsulating component if track is removed
         browser.on("trackremoved", function (track: any) {
-          onTrackRemoved && onTrackRemoved(track.config.id);
+          onTrackRemoved && onTrackRemoved(track.config.id, sessionJSON, setSessionJSON);
         });
 
         // add browser to state

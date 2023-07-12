@@ -2,7 +2,7 @@ import get from "lodash.get";
 import { ALWAYS_ON_TRACKS } from "@data/_constants";
 import VariantServiceReader  from "@readers/VariantServiceReader"
 import GWASServiceReader from "@readers/GWASServiceReader"
-import { TrackBaseOptions } from "@browser-types/tracks";
+import { Session, TrackBaseOptions } from "@browser-types/tracks";
 import { loadTracks } from "./browser";
 
 export const getTrackID = (trackView: any) => {
@@ -48,3 +48,13 @@ export const removeAndLoadTracks = (tracks: TrackBaseOptions[], browser: any) =>
         // load the new tracks
         loadTracks(tracks, browser);
   }
+
+export const onTrackRemoved = (id: string, sessionJSON: Session, setSessionJSON: any) => {
+    for(let track of sessionJSON.tracks) {
+        if(track.id === id) {
+            sessionJSON.tracks = sessionJSON.tracks.filter(track => track.id !== id)
+            setSessionJSON(sessionJSON)
+            return
+        }
+    }
+}
