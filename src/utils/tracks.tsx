@@ -3,6 +3,7 @@ import { ALWAYS_ON_TRACKS } from "@data/_constants";
 import VariantServiceReader  from "@readers/VariantServiceReader"
 import GWASServiceReader from "@readers/GWASServiceReader"
 import { TrackBaseOptions } from "@browser-types/tracks";
+import { loadTracks } from "./browser";
 
 export const getTrackID = (trackView: any) => {
     const track = trackView.track;
@@ -34,3 +35,16 @@ export const resolveTrackReader = (trackType: string, config: any): any => {
             return null;
     }
 };
+
+export const removeAndLoadTracks = (tracks: TrackBaseOptions[], browser: any) => {
+    const loadedTracks = getLoadedTracks(browser);
+        // if any tracks are loaded, remove them
+        if (Object.keys(loadedTracks).length !== 0) {
+          for (let id of loadedTracks) {
+            removeTrackById(id, browser);
+          }
+        }
+  
+        // load the new tracks
+        loadTracks(tracks, browser);
+  }

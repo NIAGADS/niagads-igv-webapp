@@ -32,10 +32,10 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
 export const createSessionObj = (tracks: TrackBaseOptions[]): Session => {
 
   //remove sequence
-  tracks = tracks.filter(track => !(track.type !== "sequence"))
+  tracks = tracks.filter(track => (track.type !== "sequence"))
   
   //remove refereence object
-  tracks = tracks.filter(track => !(track.id === "reference"))
+  tracks = tracks.filter(track => (track.id !== "reference"))
 
   //remove any functions
   for(let track of tracks) {

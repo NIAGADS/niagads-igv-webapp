@@ -15,6 +15,7 @@ import {
   downloadObjectAsJson,
   getLoadedTracks,
   removeTrackById,
+  removeAndLoadTracks,
 } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
@@ -69,17 +70,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   useEffect(() => {
     // setting initial session due to component load/reload
     if (browserIsLoaded && memoOptions && tracks) {
-      const loadedTracks = getLoadedTracks(browser);
-
-      // if any tracks are loaded, remove them
-      if (Object.keys(loadedTracks).length !== 0) {
-        for (let id of loadedTracks) {
-          removeTrackById(id, browser);
-        }
-      }
-
-      // load initial tracks
-      loadTracks(tracks, browser);
+      removeAndLoadTracks(tracks, browser);
+      setSessionJSON(createSessionObj(tracks));
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
@@ -124,9 +116,16 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   };
 
+  const handleLoadFileClick = (jsonObj: Session) => {
+    removeAndLoadTracks(jsonObj.tracks, browser);
+    const newSession = createSessionObj(jsonObj.tracks);
+    setSessionJSON(newSession);
+
+  }
+
   return (
     <>
-      <LoadSession setSessionJSON={setSessionJSON} />
+      <LoadSession handleLoadFileClick={handleLoadFileClick} />
       <SaveSession handleSave={handleSaveSession} />
       <span style={{ width: "100%" }} id="genome-browser" />
     </>
