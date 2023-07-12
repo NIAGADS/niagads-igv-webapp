@@ -2,20 +2,35 @@ import { TrackBaseOptions } from "@browser-types/tracks";
 
 export const config: TrackBaseOptions[] = [
   {
+    name: "big-bed test",
+    description: "testing bigBed",
+    id: "BB_TEST",
+    type: "annotation",
+    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/Downloads/ENCODE/ENCFF195KQC.bigBed",
+  },
+  {
+    name: "big-bed -> filer bed test",
+    description: "testing bigBed, as filer bed",
+    id: "BB_TEST_CONVERTED",
+    type: "annotation",
+    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz",
+    indexURL: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz.tbi"
+  },
+  {
     name: "GTEx Whole Blood eQTL",
     type: "annotation",
-    format: "bed",
+    format: "bed6+13",
     description: "test track; only has data in ABCA7 region",
     id: "EQTL_TEST",
     url: "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz",
-    indexed: true,
+    indexURL: "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz.tbi",
   },
   {
     url: "/service/track/variant",
     name: "ADSK 17K R3 Variants",
     type: "variant_service",
+    format: "webservice",
     visibilityWindow: 1000000,
-    removable: true,
     queryable: true,
     description:
       "Variants from the Alzheimer''s Disease Sequencing Project (ADSP) 17K R3 whole genome sequencing effort - INDELs and SNVs that passed the ADSP biallelic quality control (QC) criteria. Variants are annotated by the ADSP Annotation Pipeline.",
@@ -28,8 +43,8 @@ export const config: TrackBaseOptions[] = [
     url: "/service/track/gwas",
     name: "IGAP Rare Variants: Stage 1 (GRCh38) (Kunkle et al. 2019)",
     type: "gwas_service",
+    format: "webservice",
     visibilityWindow: 1000000,
-    removable: true,
     queryable: true,
     id: "NG00075_GRCh38_STAGE1",
   },
@@ -37,36 +52,32 @@ export const config: TrackBaseOptions[] = [
     url: "/service/track/gwas",
     name: "IGAP Rare Variants: Stage 2 (GRCh38) (Kunkle et al. 2019)",
     type: "gwas_service",
+    format: "webservice",
     visibilityWindow: 1000000,
-    removable: true,
     queryable: true,
     description: "IGAP Rare Variants: Stage 2 (GRCh38) (Kunkle et al. 2019)",
     id: "NG00075_GRCh38_STAGE2",
   },
   {
     format: "bed",
+    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF002JKH.bed.gz",
     indexURL:
       "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF002JKH.bed.gz.tbi",
     description:
       "ENCODE roadmap CD4+ alpha-beta memory T cell (repl. 1) ChIP-seq H3K36me3-histone-mark peaks (narrowPeak) [Orig: Cell type=CD4-positive, alpha-beta memory T cell;Lab=ENCODE Processing Pipeline]",
-    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF002JKH.bed.gz",
     name: "ENCODE roadmap CD4+ alpha-beta memory T cell ChIP-seq H3K36me3",
     type: "annotation",
-    visibilityWindow: -1,
-    removable: true,
     id: "NGEN024525",
   },
   {
     format: "bed",
-    indexURL:
-      "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF007WQK.bed.gz.tbi",
     description:
       "ENCODE roadmap Kidney (repl. 1) ChIP-seq H3K4me1-histone-mark peaks (narrowPeak) [Orig: Cell type=kidney;Lab=ENCODE Processing Pipeline]",
     url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF007WQK.bed.gz",
+    indexURL:
+    "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF007WQK.bed.gz.tbi",
     name: "ENCODE roadmap Kidney ChIP-seq H3K4me1",
     type: "annotation",
-    visibilityWindow: -1,
-    removable: true,
     id: "NGEN024585",
   },
 ];
