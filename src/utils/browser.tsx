@@ -29,7 +29,7 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
   }
 }
 
-export const createSessionSaveObj = (tracks: TrackBaseOptions[]): Session => {
+export const createSessionObj = (tracks: TrackBaseOptions[]): Session => {
 
   //remove sequence
   tracks = tracks.filter(track => !(track.type !== "sequence"))

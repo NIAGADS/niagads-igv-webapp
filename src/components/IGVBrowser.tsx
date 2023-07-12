@@ -11,7 +11,7 @@ import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
 import {
   loadTracks,
-  createSessionSaveObj,
+  createSessionObj,
   downloadObjectAsJson,
   getLoadedTracks,
   removeTrackById,
@@ -117,7 +117,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   //rearrange
   const handleSaveSession = () => {
     if (browserIsLoaded) {
-      let sessionObj = createSessionSaveObj(sessionJSON.tracks);
+      let sessionObj = createSessionObj(sessionJSON.tracks);
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session");
     } else {
       alert("Wait until the browser is loaded before saving");
