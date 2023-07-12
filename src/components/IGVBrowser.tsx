@@ -20,6 +20,7 @@ import {
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
+import { useSessionStorage } from "usehooks-ts";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -42,7 +43,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
-  const [sessionJSON, setSessionJSON] = useState<Session>({ tracks: tracks });
+  // const [sessionJSON, setSessionJSON] = useState<Session>({ tracks: tracks });
+  const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', null)
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -70,8 +72,13 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   useEffect(() => {
     // setting initial session due to component load/reload
     if (browserIsLoaded && memoOptions && tracks) {
-      removeAndLoadTracks(tracks, browser);
-      setSessionJSON(createSessionObj(tracks));
+      if(sessionJSON != null) {
+        removeAndLoadTracks(sessionJSON.tracks, browser);
+      }
+      else {
+        removeAndLoadTracks(tracks, browser);
+        setSessionJSON(createSessionObj(tracks));
+      }
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
