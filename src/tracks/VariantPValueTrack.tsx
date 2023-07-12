@@ -4,6 +4,7 @@
 import igv from "igv/dist/igv.esm";
 import { ManhattanColors } from "@tracks/color_scales"
 import { FEATURE_INFO_BASE_URL } from "@data/_constants";
+import { Generator } from "webpack";
 
 const DEFAULT_POPOVER_WINDOW = 100000000
 
@@ -181,16 +182,14 @@ class VariantPValueTrack extends igv.TrackBase {
                         break
                     }
                     const pos = f.end; // IGV is zero-based, so end of the variant is the position
-                    if(this.type === "eqtl"){
-                        //location, p-value are already in popupData, no need for variant
-                        data = data.concat(f.popupData())
-                    }
-                    else{
                         const href = recHref + '/variant/' + f.record_pk;
                         data.push({name: 'Location:', value: f.chr + ':' + pos})
+                        if (f.hasOwnProperty('gene_id')) {
+                            data.push({name: 'Gene', value: f.gene_id})
+                        }
                         data.push({name: 'p-Value:', value: f.pvalue})  
                         data.push({name: 'Variant:', html: `<a target="_blank" href="${href}">${f.variant}</a>`, title: "View GenomicsDB record for variant " + f.variant})
-                    }
+
                     count++
                 }
             }

@@ -5,15 +5,20 @@ import find from "lodash.find";
 import {
   VariantPValueTrack,
   VariantServiceTrack as VariantTrack,
-  trackPopover
+  trackPopover,
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
 import { Session, TrackBaseOptions } from "@browser-types/tracks";
-import { resolveTrackReader, loadTrack, loadTracks, createSessionSaveObj, downloadObjectAsJson, removeNonReferenceTracks, getLoadedTracks, removeTrackById} from "@utils/index";
+import {
+  loadTracks,
+  createSessionSaveObj,
+  downloadObjectAsJson,
+  getLoadedTracks,
+  removeTrackById,
+} from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
-
 
 export const DEFAULT_FLANK = 1000;
 
@@ -36,9 +41,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
-  //set to tracks
-  //any useEffect dependant on tracks must take sessionJSON instead
-  const [sessionJSON, setSessionJSON] = useState<Session>({tracks: tracks});
+  const [sessionJSON, setSessionJSON] = useState<Session>({ tracks: tracks });
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -64,15 +67,19 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   }, [genome, locus]);
 
   useEffect(() => {
+    // setting initial session due to component load/reload
     if (browserIsLoaded && memoOptions && tracks) {
-      const loadedTracks = getLoadedTracks(browser)
-      //remove
-      if(Object.keys(loadedTracks).length !== 0){
-        for(let id of loadedTracks){
-          removeTrackById(id, browser)
+      const loadedTracks = getLoadedTracks(browser);
+
+      // if any tracks are loaded, remove them
+      if (Object.keys(loadedTracks).length !== 0) {
+        for (let id of loadedTracks) {
+          removeTrackById(id, browser);
         }
       }
-      loadTracks(tracks, browser)
+
+      // load initial tracks
+      loadTracks(tracks, browser);
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
@@ -82,10 +89,13 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     });
 
     const targetDiv = document.getElementById("genome-browser");
-    if (memoOptions != null) {
-      igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
-        // browser is initialized and can now be used
 
+    if (memoOptions != null) {
+      igv.registerTrackClass("gwas_service", VariantPValueTrack);
+      igv.registerTrackClass("eqtl", VariantPValueTrack);
+      igv.registerTrackClass("variant_service", VariantTrack);
+
+      igv.createBrowser(targetDiv, memoOptions).then(function (browser: any) {
         // custom track popovers
         browser.on("trackclick", trackPopover);
 
@@ -93,22 +103,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.on("trackremoved", function (track: any) {
           onTrackRemoved && onTrackRemoved(track.config.id);
         });
-
-        // add custom track types to track factory
-        browser.addTrackToFactory(
-          "gwas_service",
-          (config: any, browser: any) => new VariantPValueTrack(config, browser)
-        );
-
-        browser.addTrackToFactory(
-          "variant_service",
-          (config: any, browser: any) => new VariantTrack(config, browser)
-        );
-
-        browser.addTrackToFactory(
-          "eqtl",
-          (config: any, browser: any) => new VariantPValueTrack(config, browser)
-        )
 
         // add browser to state
         setBrowser(browser);
@@ -121,24 +115,23 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   }, [onBrowserLoad, memoOptions]);
 
   //rearrange
-  const handleSave = () => {
-    if(browserIsLoaded){
-      let sessionObj = createSessionSaveObj(sessionJSON.tracks)
-      downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session")
+  const handleSaveSession = () => {
+    if (browserIsLoaded) {
+      let sessionObj = createSessionSaveObj(sessionJSON.tracks);
+      downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session");
+    } else {
+      alert("Wait until the browser is loaded before saving");
     }
-    else{
-      alert("Wait until the browser is loaded before saving")
-    }
-  }
+  };
 
   return (
     <>
-      <LoadSession setSessionJSON={setSessionJSON}/>
-      <SaveSession handleSave={handleSave}/>
+      <LoadSession setSessionJSON={setSessionJSON} />
+      <SaveSession handleSave={handleSaveSession} />
       <span style={{ width: "100%" }} id="genome-browser" />
     </>
   );
-};  
+};
 
 export const MemoIGVBrowser = React.memo(IGVBrowser);
 export default IGVBrowser;

@@ -2,13 +2,36 @@ import { TrackBaseOptions } from "@browser-types/tracks";
 
 export const config: TrackBaseOptions[] = [
   {
+    url: "/service/track/variant",
+    name: "ADSK 17K R3 Variants",
+    type: "variant_service",
+    format: "webservice",
+    visibilityWindow: 1000000,
+    queryable: true,
+    description:
+      "Variants from the Alzheimer''s Disease Sequencing Project (ADSP) 17K R3 whole genome sequencing effort - INDELs and SNVs that passed the ADSP biallelic quality control (QC) criteria. Variants are annotated by the ADSP Annotation Pipeline.",
+    id: "ADSP_17K",
+    order: 1,
+  },
+  {
+    name: "big-bed -> filer bed test",
+    description: "testing bigBed/narrowpeak, as filer bed",
+    id: "BB_TEST_CONVERTED",
+    type: "annotation",
+    format: "narrowpeak",
+    url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz",
+    indexURL:
+      "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/DNase-seq/broadpeak/hg38/ENCFF195KQC.bed.gz.tbi",
+  },
+  {
     name: "GTEx Whole Blood eQTL",
     type: "eqtl",
     format: "bed6+13",
     description: "test track; only has data in ABCA7 region",
     id: "EQTL_TEST",
     url: "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz",
-    indexURL: "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz.tbi",
+    indexURL:
+      "http://localhost:3000/examples/files/GTEx_v8_whole_blood_eQTL_ABCA7_regions.bed.gz.tbi",
   },
   {
     description:
@@ -48,7 +71,7 @@ export const config: TrackBaseOptions[] = [
       "ENCODE roadmap Kidney (repl. 1) ChIP-seq H3K4me1-histone-mark peaks (narrowPeak) [Orig: Cell type=kidney;Lab=ENCODE Processing Pipeline]",
     url: "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF007WQK.bed.gz",
     indexURL:
-    "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF007WQK.bed.gz.tbi",
+      "https://tf.lisanwanglab.org/GADB/Annotationtracks/ENCODE/data/ChIP-seq/narrowpeak/hg38/1/ENCFF007WQK.bed.gz.tbi",
     name: "ENCODE roadmap Kidney ChIP-seq H3K4me1",
     type: "annotation",
     id: "NGEN024585",
