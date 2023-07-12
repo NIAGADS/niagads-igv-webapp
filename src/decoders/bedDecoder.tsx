@@ -31,8 +31,10 @@ export function decodeBedXY(tokens: any, header: any) {
 
     // parse optional columns
     parseOptionalFields(feature, tokens, X, header.columnNames)
-
+    //parse out P-values
     feature = parsePValues(feature, tokens, header.columnNames)
+    //parse out gene info
+    feature = parseGeneInfo(feature)
 
     feature.setAdditionalAttributes({"popupData": extractPopupData})
 
@@ -54,7 +56,6 @@ function extractPopupData(genomeId: any) {
 
             let value = feature[property];
             data.push({name: capitalize(property), value: value});
-
             //removed alleles code
         }
         //If it's the info object
@@ -63,8 +64,8 @@ function extractPopupData(genomeId: any) {
             //iterate over info and add it to data
             for(let infoProp in feature[property]) {
                 let value = feature[property][infoProp]
-                let name = snakeToProperCase(infoProp)
-                data.push({name: name, value: value})
+                let name = formatInfoKey(infoProp)
+                if(value) data.push({name: name, value: value})
             }
         }
     }
@@ -78,7 +79,53 @@ function extractPopupData(genomeId: any) {
     data.push({name: 'Location', value: posString})
 
     return data
+}
 
+function formatInfoKey(key: string) {
+    //handle special cases
+    //should be updated as more are found
+    let result = ""
+    switch(key){
+        case "FDR":
+            result = "FDR"
+            break
+        case "qtl_dist_to_target":
+            result = "QTL dist to target"
+            break
+        case "QC_info":
+            result = "QC info" 
+            break
+        default:
+            result = key.replace(/_/g, ' ');
+            result = result.charAt(0).toUpperCase() + result.slice(1).toLowerCase();
+    }
+    
+    return result;
+}
+
+function parseGeneInfo(feature: BedXYFeature) {
+    let IDStatus = false;
+    let symbolStatus = false;
+    for(let field in feature.info){
+        if(field === "gene" || field === "gene_name" || field === "target_gene_symbol"){
+            feature.info.gene_symbol = feature.info[field]
+            delete feature.info[field]
+            symbolStatus = true;
+        }
+        else if(field === "gene_id"){
+            IDStatus = true;
+        }
+    }
+    if(!IDStatus && symbolStatus){
+        //if there is a symbol but no id, change the symbol name to id
+        //make the symbol name field null
+        //gene id becomes gene
+        //@ts-ignore
+        feature.info.gene = feature.info.gene_symbol
+        feature.info.gene_symbol = null
+    }
+
+    return feature;
 }
 
 function parseBedToken(field: string, token: string) {

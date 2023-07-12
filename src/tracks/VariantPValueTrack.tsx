@@ -41,6 +41,7 @@ class VariantPValueTrack extends igv.TrackBase {
             }
 
         this.featureSource = igv.FeatureSource(config, this.browser.genome)
+        this.type = config.type || "variant"
     }
 
     async postInit() {
@@ -179,14 +180,16 @@ class VariantPValueTrack extends igv.TrackBase {
                         data.push("...");
                         break
                     }
-                    if (typeof f.popupData === 'function') {
+                    const pos = f.end; // IGV is zero-based, so end of the variant is the position
+                    if(this.type === "eqtl"){
+                        //location, p-value are already in popupData, no need for variant
                         data = data.concat(f.popupData())
-                    } else {
-                        const pos = f.end; // IGV is zero-based, so end of the variant is the position
+                    }
+                    else{
                         const href = recHref + '/variant/' + f.record_pk;
-                        data.push({name: 'Variant:', html: `<a target="_blank" href="${href}">${f.variant}</a>`, title: "View GenomicsDB record for variant " + f.variant})
                         data.push({name: 'Location:', value: f.chr + ':' + pos})
                         data.push({name: 'p-Value:', value: f.pvalue})  
+                        data.push({name: 'Variant:', html: `<a target="_blank" href="${href}">${f.variant}</a>`, title: "View GenomicsDB record for variant " + f.variant})
                     }
                     count++
                 }

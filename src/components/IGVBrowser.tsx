@@ -105,6 +105,11 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           (config: any, browser: any) => new VariantTrack(config, browser)
         );
 
+        browser.addTrackToFactory(
+          "eqtl",
+          (config: any, browser: any) => new VariantPValueTrack(config, browser)
+        )
+
         // add browser to state
         setBrowser(browser);
         setBrowserIsLoaded(true);
