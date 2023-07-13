@@ -44,8 +44,9 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
-  // const [sessionJSON, setSessionJSON] = useState<Session>({ tracks: tracks });
   const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', null)
+  //TODO: change initial value to that in the session storage
+  const [roiSetsLength, setRoiSetsLength] = useState(0)
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -82,6 +83,27 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       }
     }
   }, [browserIsLoaded, memoOptions, tracks]);
+
+  // //@ts-ignore
+  // useEffect(() => {
+  //   if(browser !== null){
+  //     const timer = setTimeout(() => {
+  //       let setLength = browser?.roiManager.roiSets.length
+  //       if(setLength !== roiSetsLength) setRoiSetsLength(setLength)
+  //     }, 10000)
+  //     return () => clearInterval(timer)
+  //   }
+  // }, [browser])
+
+  // useEffect(() => {
+  //   if(browser !== null){
+  //     console.log(browser.roiManager.roiSets)
+  //   }
+  // }, [roiSetsLength])
+  useEffect(() => {
+    // if(browser?.roiManager.roiSets.length) console.log("change")
+    console.log("run")
+  }, [browser?.roiManager])
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
