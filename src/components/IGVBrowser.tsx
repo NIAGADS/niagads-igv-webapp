@@ -1,7 +1,8 @@
-import React, { useLayoutEffect, useMemo, useState, useEffect } from "react";
+import React, { useLayoutEffect, useMemo, useState, useEffect, useRef } from "react";
 import igv from "igv/dist/igv.esm";
 import noop from "lodash.noop";
 import find from "lodash.find";
+import isEqual from "lodash.isequal";
 import {
   VariantPValueTrack,
   VariantServiceTrack as VariantTrack,
@@ -47,6 +48,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', null)
   //TODO: change initial value to that in the session storage
   const [roiSetsLength, setRoiSetsLength] = useState(0)
+  const prevRoiSets = useRef(browser?.roiManager.roiSets)
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -83,6 +85,32 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       }
     }
   }, [browserIsLoaded, memoOptions, tracks]);
+
+  function useDeepCompare(value: any) {
+    const ref = useRef();
+  
+    // Store current value in ref
+    useEffect(() => {
+      ref.current = value;
+    }, [value]);
+  
+    // Only return true if value has changed
+    return !isEqual(ref.current, value);
+  }
+
+  const roiChanged = useDeepCompare(browser?.roiManager.roiSets);
+
+  useEffect(() => {
+    console.log("here")
+  }, [roiChanged])
+
+  // useEffect(() => {
+  //   if(browser !== null && !isEqual(browser.roiManager.roiSets, prevRoiSets)){
+  //     console.log("not equal")
+  //   }
+
+  //   prevRoiSets.current = browser?.roiManager.roiSets;
+  // }, [browser])
 
   // //@ts-ignore
   // useEffect(() => {
