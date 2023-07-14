@@ -34,15 +34,19 @@ export interface Session {
 
     //TODO: currently optional because functionality isn't built yet but will be required in the future
     reference?: any
-    roi?: ROIChr
+    roi?: ROISet[]
     locus?: any
 }
 
-export interface ROIChr {
-    [key: string]: ROI[]
+export interface ROISet {
+    features: ROIFeature[],
+
+    name?: string,
+    color?: string,
+    isUserDefined?: boolean
 }
 
-export interface ROI {
+export interface ROIFeature {
     chr: string,
     start: number,
     end: number

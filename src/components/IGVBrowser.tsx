@@ -9,7 +9,7 @@ import {
   trackPopover,
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
-import { ROI, ROIChr, Session, TrackBaseOptions } from "@browser-types/tracks";
+import { ROISet, Session, TrackBaseOptions } from "@browser-types/tracks";
 import {
   loadTracks,
   createSessionObj,
@@ -45,8 +45,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
-  const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', null)
-  const [prevROI, setPrevROI] = useState<ROIChr>({})
+  const [sessionJSON, setSessionJSON] = useSessionStorage<Session>('sessionJSON', null)
+  const [prevROI, setPrevROI] = useState<ROISet[]>([])
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -76,6 +76,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     if (browserIsLoaded && memoOptions && tracks) {
       if(sessionJSON != null) {
         removeAndLoadTracks(sessionJSON.tracks, browser);
+        removeAndLoadROIs(sessionJSON.roi, browser);
       }
       else {
         removeAndLoadTracks(tracks, browser);
@@ -87,9 +88,10 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   useEffect(() => {
     const intervalId = setInterval(() => {
       //check to see if current ROIs are different than the past ROIs
-      if(browser && browser.roiManager.roiSets.length !== 0 &&!isEqual(prevROI, browser.roiManager.roiSets[0].featureSource.featureMap)){
-        const ROIs = JSON.parse(JSON.stringify(browser.roiManager.roiSets[0].featureSource.featureMap))
-        setPrevROI(ROIs)
+      if(browser && browser.roiManager.roiSets.length !== 0 &&!isEqual(prevROI, JSON.parse(JSON.stringify(browser.roiManager.roiSets)))){
+        const ROISets = JSON.parse(JSON.stringify(browser.roiManager.roiSets))
+        setPrevROI(ROISets)
+        console.log(sessionStorage.getItem('sessionJSON'))
       }
     }, 1000);
     
@@ -98,15 +100,18 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(browser){
-      clearAndLoadROIs(browser, prevROI)
+      //update the session with the new ROI
+      const updatedSession: Session = sessionJSON
+      updatedSession.roi = prevROI
+      setSessionJSON(updatedSession)
     }
   }, [prevROI])
 
-  //TODO: move to utils
-  const clearAndLoadROIs = (browser: any, ROIs: ROIChr) => {
-    console.log(ROIs)
+  const removeAndLoadROIs = (ROIs: ROISet[], browser: any) => {
+    console.log("ROIs: ", ROIs)
+    browser.clearROIs()
+    browser.loadROI(ROIs)
   }
-
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
       console.log(event);

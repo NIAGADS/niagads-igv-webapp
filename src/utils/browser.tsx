@@ -47,7 +47,7 @@ export const createSessionObj = (tracks: TrackBaseOptions[]): Session => {
   //TODO: locus and roi are currently set to default values
   let sessionObj: Session = {
     tracks: tracks,
-    roi: {},
+    roi: [],
     locus: "chr19:1,038,997-1,066,572",
   }
 
