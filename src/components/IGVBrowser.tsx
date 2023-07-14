@@ -46,9 +46,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
   const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', null)
-  //TODO: change initial value to that in the session storage
-  const [roiSetsLength, setRoiSetsLength] = useState(0)
-  const prevRoiSets = useRef(browser?.roiManager.roiSets)
+  const [prevROI, setPrevROI] = useState({})
+  const [ROIVersion, setROIVersion] = useState(0)
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -86,52 +85,25 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
-  function useDeepCompare(value: any) {
-    const ref = useRef();
-  
-    // Store current value in ref
-    useEffect(() => {
-      ref.current = value;
-    }, [value]);
-  
-    // Only return true if value has changed
-    return !isEqual(ref.current, value);
-  }
-
-  const roiChanged = useDeepCompare(browser?.roiManager.roiSets);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      //check to see if current ROIs are different than the past ROIs
+      if(browser && browser.roiManager.roiSets.length !== 0 &&!isEqual(prevROI, browser.roiManager.roiSets[0].featureSource.featureMap)){
+        // const didChange = compareROIs(prevROI, browser)
+        const ROIs = JSON.parse(JSON.stringify(browser.roiManager.roiSets[0].featureSource.featureMap))
+        setPrevROI(ROIs)
+        setROIVersion(ROIVersion + 1)
+      }
+    }, 1000);
+    
+    return () => clearInterval(intervalId);
+  }, [browserIsLoaded, browser, prevROI]);
 
   useEffect(() => {
-    console.log("here")
-  }, [roiChanged])
-
-  // useEffect(() => {
-  //   if(browser !== null && !isEqual(browser.roiManager.roiSets, prevRoiSets)){
-  //     console.log("not equal")
-  //   }
-
-  //   prevRoiSets.current = browser?.roiManager.roiSets;
-  // }, [browser])
-
-  // //@ts-ignore
-  // useEffect(() => {
-  //   if(browser !== null){
-  //     const timer = setTimeout(() => {
-  //       let setLength = browser?.roiManager.roiSets.length
-  //       if(setLength !== roiSetsLength) setRoiSetsLength(setLength)
-  //     }, 10000)
-  //     return () => clearInterval(timer)
-  //   }
-  // }, [browser])
-
-  // useEffect(() => {
-  //   if(browser !== null){
-  //     console.log(browser.roiManager.roiSets)
-  //   }
-  // }, [roiSetsLength])
-  useEffect(() => {
-    // if(browser?.roiManager.roiSets.length) console.log("change")
-    console.log("run")
-  }, [browser?.roiManager])
+    if(browser){
+      console.log('roi changed', prevROI)
+    }
+  }, [prevROI, ROIVersion])
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
