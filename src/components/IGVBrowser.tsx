@@ -47,7 +47,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   const [browser, setBrowser] = useState<any>(null);
   const [sessionJSON, setSessionJSON] = useSessionStorage('sessionJSON', null)
   const [prevROI, setPrevROI] = useState({})
-  const [ROIVersion, setROIVersion] = useState(0)
 
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -92,7 +91,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         // const didChange = compareROIs(prevROI, browser)
         const ROIs = JSON.parse(JSON.stringify(browser.roiManager.roiSets[0].featureSource.featureMap))
         setPrevROI(ROIs)
-        setROIVersion(ROIVersion + 1)
       }
     }, 1000);
     
@@ -103,7 +101,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     if(browser){
       console.log('roi changed', prevROI)
     }
-  }, [prevROI, ROIVersion])
+  }, [prevROI])
 
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
