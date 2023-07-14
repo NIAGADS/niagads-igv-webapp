@@ -34,6 +34,16 @@ export interface Session {
 
     //TODO: currently optional because functionality isn't built yet but will be required in the future
     reference?: any
-    roi?: any
+    roi?: ROIChr
     locus?: any
+}
+
+export interface ROIChr {
+    [key: string]: ROI[]
+}
+
+export interface ROI {
+    chr: string,
+    start: number,
+    end: number
 }
