@@ -46,8 +46,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
   const [sessionJSON, setSessionJSON] = useSessionStorage<Session>('sessionJSON', null)
-  const [prevROI, setPrevROI] = useState<ROISet[]>([])
-
+  
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
     return {
@@ -88,24 +87,20 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   useEffect(() => {
     const intervalId = setInterval(() => {
       //check to see if current ROIs are different than the past ROIs
-      if(browser && browser.roiManager.roiSets.length !== 0 &&!isEqual(prevROI, JSON.parse(JSON.stringify(browser.roiManager.roiSets)))){
-        const ROISets = JSON.parse(JSON.stringify(browser.roiManager.roiSets))
-        setPrevROI(ROISets)
-        console.log(sessionStorage.getItem('sessionJSON'))
+      // && browser.roiManager.roiSets.length !== 0 &&!isEqual(prevROI, JSON.parse(JSON.stringify(browser.roiManager.roiSets)))
+      if(browser && browser.roiManager.roiSets.length !== 0){
+        const currentROIs = browser.getUserDefinedROIs()
+        if(!isEqual(currentROIs, JSON.parse(JSON.stringify(browser.roiManager.roiSets)))){
+          const ROISets = JSON.parse(JSON.stringify(browser.roiManager.roiSets))
+          let updatedSession = sessionJSON
+          updatedSession.roi = ROISets
+          setSessionJSON(updatedSession)
+        }
       }
     }, 1000);
     
     return () => clearInterval(intervalId);
-  }, [browserIsLoaded, browser, prevROI]);
-
-  useEffect(() => {
-    if(browser){
-      //update the session with the new ROI
-      const updatedSession: Session = sessionJSON
-      updatedSession.roi = prevROI
-      setSessionJSON(updatedSession)
-    }
-  }, [prevROI])
+  }, [browserIsLoaded, browser]);
 
   const removeAndLoadROIs = (ROIs: ROISet[], browser: any) => {
     console.log("ROIs: ", ROIs)
