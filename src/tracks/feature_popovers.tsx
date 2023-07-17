@@ -106,7 +106,7 @@ const trackPopover = (track: any, popoverData: any) => {
 
     popoverData = track.id === "ENSEMBL_GENE" ? _geneTrackPopoverData(popoverData) : popoverData;
 
-    const tableStartMarkup = '<table style="background: transparent; position: relative">';
+    const tableStartMarkup = '<table style="background: transparent; position: relative; border-spacing: 0">';
 
     let markup = tableStartMarkup;
     popoverData.forEach(function (item: any) {
@@ -129,10 +129,16 @@ const trackPopover = (track: any, popoverData: any) => {
             }
 
             if (label) {
-                markup += "<tr><td>" + label + "</td><td>" + value + "</td></tr>";
+                markup += "<tr><td style='padding-left: 5px'>" + label + "</td><td>" + value + "</td></tr>";
             } else {
                 // not a name/value pair
-                markup += "<tr><td>" + value + "</td></tr>";
+                if(value === "<hr/>") {
+                    value = "<hr color='#7F7F7F' noshade size='1px'/>"
+                    markup += "<tr><td style='padding: 0'>" + value + "</td><td style='padding: 0'>" + value + "</td></tr>";
+                }
+                else{
+                    markup += "<tr><td>" + value + "</td><td>" + value + "</td></tr>";
+                }
             }
         }
     });
