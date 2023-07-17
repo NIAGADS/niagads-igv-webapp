@@ -129,7 +129,8 @@ const trackPopover = (track: any, popoverData: any) => {
             }
 
             if (label) {
-                markup += "<tr><td style='padding-left: 5px'>" + label + "</td><td>" + value + "</td></tr>";
+                const hoverCSS = `onMouseOver='this.style.backgroundColor="#EEE"'; onMouseOut='this.style.backgroundColor="#FFF"'`
+                markup += `<tr ${hoverCSS}><td style='padding-left: 5px'>` + label + "</td><td>" + value + "</td></tr>";
             } else {
                 // not a name/value pair
                 if(value === "<hr/>") {
