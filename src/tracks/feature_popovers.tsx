@@ -98,6 +98,31 @@ const _geneTrackPopoverData = (info: any) => {
     return pData;
 };
 
+const formatPopoverData = (data: any) => {
+    for(let row of data) {
+        let value = null
+        if(row.hasOwnProperty('value')) value = row.value
+        else continue
+        // if value is a number, round to two decimal places. 
+        //If the number is in scientific notation, round to two decimal places plus the exponent
+        if(!isNaN(value) && value !== null) {
+            if(value.toString().includes("e")) {
+                const [number, exponent] = value.toString().split("e")
+                value = parseFloat(number).toFixed(2) + "e" + exponent
+            }
+            //if the value is < 0.01, convert to scientific notation
+            else if(value < 0.01) {
+                value = value.toExponential(2)
+            }
+            else {
+                value = parseFloat(value).toFixed(2)
+            }
+            row.value = value
+        }
+    }
+    return data
+}
+
 const trackPopover = (track: any, popoverData: any) => {
     // Don't show a pop-over when there's no data.
     if (!popoverData || !popoverData.length) {
@@ -105,7 +130,7 @@ const trackPopover = (track: any, popoverData: any) => {
     }
 
     popoverData = track.id === "ENSEMBL_GENE" ? _geneTrackPopoverData(popoverData) : popoverData;
-
+    popoverData = formatPopoverData(popoverData)
     const tableStartMarkup = '<table style="background: transparent; position: relative; border-spacing: 0">';
 
     let markup = tableStartMarkup;
@@ -130,7 +155,7 @@ const trackPopover = (track: any, popoverData: any) => {
 
             if (label) {
                 const hoverCSS = `onMouseOver='this.style.backgroundColor="#EEE"'; onMouseOut='this.style.backgroundColor="#FFF"'`
-                markup += `<tr ${hoverCSS}><td style='padding-left: 5px'>` + label + "</td><td>" + value + "</td></tr>";
+                markup += `<tr ${hoverCSS}><td style='padding-left: 5px'>` + label + "</td><td style='padding-left: 5px'>" + value + "</td></tr>";
             } else {
                 // not a name/value pair
                 if(value === "<hr/>") {
