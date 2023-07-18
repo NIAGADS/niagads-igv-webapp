@@ -75,7 +75,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     if (browserIsLoaded && memoOptions && tracks) {
       if(sessionJSON != null) {
         removeAndLoadTracks(sessionJSON.tracks, browser);
-        removeAndLoadROIs(sessionJSON.roi, browser);
+        if(sessionJSON.hasOwnProperty("roi")) removeAndLoadROIs(sessionJSON.roi, browser);
       }
       else {
         removeAndLoadTracks(tracks, browser);
@@ -92,7 +92,10 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         const currentROIs = browser.getUserDefinedROIs()
         if(!isEqual(currentROIs, JSON.parse(JSON.stringify(browser.roiManager.roiSets)))){
           const ROISets = JSON.parse(JSON.stringify(browser.roiManager.roiSets))
-          let updatedSession = sessionJSON
+          let updatedSession: Session = null
+          if(sessionJSON) updatedSession = sessionJSON
+          //if there's no session then create one with default tracks and locus
+          else updatedSession = createSessionObj(tracks)
           updatedSession.roi = ROISets
           setSessionJSON(updatedSession)
         }
