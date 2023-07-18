@@ -32,6 +32,7 @@ interface IGVBrowserProps {
   locus?: string;
   onTrackRemoved?: (track: string, sessionJSON:Session, setSessionJSON: any) => void;
   onBrowserLoad?: (Browser: any) => void;
+  onLocusChange?: (referenceFrameList: any, trackDragState: boolean) => void;
   tracks: TrackBaseOptions[];
 }
 
@@ -41,11 +42,13 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   locus,
   onBrowserLoad,
   onTrackRemoved,
+  onLocusChange,
   tracks,
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
   const [sessionJSON, setSessionJSON] = useSessionStorage<Session>('sessionJSON', null)
+  const isDragging = useRef<boolean>(false)
   
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -130,6 +133,21 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.on("trackremoved", function (track: any) {
           onTrackRemoved && onTrackRemoved(track.config.id, sessionJSON, setSessionJSON);
         });
+
+        browser.on("locuschange", function (referenceFrameList: any) {
+          onLocusChange && onLocusChange(referenceFrameList, isDragging.current)
+        })
+
+        browser.on("trackdrag", function () {
+          if(!isDragging.current){
+            isDragging.current = true
+          } 
+
+        })
+
+        browser.on("trackdragend", function () {
+          isDragging.current = false
+        })
 
         // add browser to state
         setBrowser(browser);

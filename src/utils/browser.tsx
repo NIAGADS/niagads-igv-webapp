@@ -61,3 +61,9 @@ export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: an
     }
   }
 }
+
+export const onLocusChange = (referenceFrameList: any, isDragging: boolean) => {
+  if(isDragging) console.log("being dragged")
+  
+  
+}
