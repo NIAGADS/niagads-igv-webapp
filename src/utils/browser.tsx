@@ -2,6 +2,7 @@ import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/track
 import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader } from "./tracks";
 import { get } from "lodash"
+import { ReferenceFrame } from "@browser-types/browserObjects";
 
 const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE"];
 
@@ -60,4 +61,20 @@ export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: an
       browser.removeTrackByName(track.name)
     }
   }
+}
+
+export const updateSessionLocus = (locusString: string, setSessionJSON: any) => {
+  //assumes one reference frame
+  //function gets called once on the beginning of the drag and once upon completion
+  //Also gets called any other time the the locus is updated
+  setSessionJSON((previousSessionJSON: Session) => {
+    previousSessionJSON.locus = locusString
+    //use spread to create new object and trigger rerender
+    return previousSessionJSON
+  })
+}
+
+export const createLocusString = (referenceFrameList: ReferenceFrame[]): string => {
+  const frame = referenceFrameList[0]
+  return `${frame.chr}:${frame.start}-${frame.end}`
 }

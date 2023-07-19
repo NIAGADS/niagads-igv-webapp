@@ -17,12 +17,14 @@ import {
   getLoadedTracks,
   removeTrackById,
   removeAndLoadTracks,
+  createLocusString
 } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
 import { useSessionStorage } from "usehooks-ts";
 import AddTracksButton from "./AddTracksButton";
+import { ReferenceFrame } from "@browser-types/browserObjects";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -30,8 +32,9 @@ interface IGVBrowserProps {
   featureSearchUrl: string;
   genome: string;
   locus?: string;
-  onTrackRemoved?: (track: string, sessionJSON:Session, setSessionJSON: any) => void;
+  onTrackRemoved?: (track: string, setSessionJSON: any) => void;
   onBrowserLoad?: (Browser: any) => void;
+  updateSessionLocus?: (locusString: string, setSessionJSON: any) => void;
   tracks: TrackBaseOptions[];
 }
 
@@ -41,11 +44,13 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   locus,
   onBrowserLoad,
   onTrackRemoved,
+  updateSessionLocus,
   tracks,
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
   const [sessionJSON, setSessionJSON] = useSessionStorage<Session>('sessionJSON', null)
+  const isDragging = useRef<boolean>(false)
   
   const memoOptions: any = useMemo(() => {
     const referenceTrackConfig: any = find(_genomes, { id: genome });
@@ -76,6 +81,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       if(sessionJSON != null) {
         removeAndLoadTracks(sessionJSON.tracks, browser);
         if(sessionJSON.hasOwnProperty("roi")) removeAndLoadROIs(sessionJSON.roi, browser);
+        if(sessionJSON.hasOwnProperty("locus")) browser.search(sessionJSON.locus)
       }
       else {
         removeAndLoadTracks(tracks, browser);
@@ -127,9 +133,28 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.on("trackclick", trackPopover);
 
         // perform action in encapsulating component if track is removed
+        //callback does not get the updated value of sessionJSON so functional form of the setter is used
         browser.on("trackremoved", function (track: any) {
-          onTrackRemoved && onTrackRemoved(track.config.id, sessionJSON, setSessionJSON);
+          onTrackRemoved && onTrackRemoved(track.config.id, setSessionJSON);
         });
+
+        browser.on("locuschange", function (referenceFrameList: ReferenceFrame[]) {
+          !isDragging.current && sessionJSON && 
+          updateSessionLocus(createLocusString(referenceFrameList), setSessionJSON)
+        })
+
+        browser.on("trackdrag", function () {
+          if(!isDragging.current){
+            isDragging.current = true
+          } 
+
+        })
+
+        browser.on("trackdragend", function () {
+          isDragging.current = false
+          const currentLoci: string = browser.currentLoci()
+          updateSessionLocus(currentLoci, setSessionJSON)
+        })
 
         // add browser to state
         setBrowser(browser);
