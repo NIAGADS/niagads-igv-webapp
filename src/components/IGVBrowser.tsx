@@ -17,12 +17,14 @@ import {
   getLoadedTracks,
   removeTrackById,
   removeAndLoadTracks,
+  createReferenceFrames
 } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
 import { useSessionStorage } from "usehooks-ts";
 import AddTracksButton from "./AddTracksButton";
+import { ReferenceFrame } from "@browser-types/browserObjects";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -32,7 +34,7 @@ interface IGVBrowserProps {
   locus?: string;
   onTrackRemoved?: (track: string, sessionJSON:Session, setSessionJSON: any) => void;
   onBrowserLoad?: (Browser: any) => void;
-  onLocusChange?: (referenceFrameList: any, trackDragState: boolean) => void;
+  onLocusChange?: (referenceFrameList: any) => void;
   tracks: TrackBaseOptions[];
 }
 
@@ -134,8 +136,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           onTrackRemoved && onTrackRemoved(track.config.id, sessionJSON, setSessionJSON);
         });
 
-        browser.on("locuschange", function (referenceFrameList: any) {
-          onLocusChange && onLocusChange(referenceFrameList, isDragging.current)
+        browser.on("locuschange", function (referenceFrameList: ReferenceFrame[]) {
+          onLocusChange && !isDragging.current && onLocusChange(referenceFrameList)
         })
 
         browser.on("trackdrag", function () {
@@ -147,6 +149,9 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         browser.on("trackdragend", function () {
           isDragging.current = false
+          const currentLoci: string = browser.currentLoci()
+          const referenceFrame = createReferenceFrames(currentLoci)
+          onLocusChange(referenceFrame)
         })
 
         // add browser to state

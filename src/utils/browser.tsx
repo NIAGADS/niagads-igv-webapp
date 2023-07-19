@@ -2,6 +2,7 @@ import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/track
 import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader } from "./tracks";
 import { get } from "lodash"
+import { ReferenceFrame } from "@browser-types/browserObjects";
 
 const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE"];
 
@@ -62,8 +63,22 @@ export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: an
   }
 }
 
-export const onLocusChange = (referenceFrameList: any, isDragging: boolean) => {
-  if(isDragging) console.log("being dragged")
+export const onLocusChange = (referenceFrameList: ReferenceFrame[]) => {
+  //function gets called once on the beginning of the drag and once upon completion
+  console.log(referenceFrameList)
   
   
+}
+
+export const createReferenceFrames = (currentLociString: string): ReferenceFrame[] => {
+  //currently assumes one reference frame
+  const [chr, interval] = currentLociString.split(':')
+  const [start, end] = interval.split('-')
+  const reference: ReferenceFrame = {
+    chr: chr,
+    start: parseFloat(start),
+    end: parseFloat(end)
+  }
+  //returned as an array to match the format of the onLocusChange event
+  return [reference]
 }
