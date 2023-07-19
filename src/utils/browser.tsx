@@ -63,17 +63,15 @@ export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: an
   }
 }
 
-export const updateSessionLocus = (locusString: string, sessionJSON: Session, setSessionJSON: any) => {
+export const updateSessionLocus = (locusString: string, setSessionJSON: any) => {
   //assumes one reference frame
   //function gets called once on the beginning of the drag and once upon completion
   //Also gets called any other time the the locus is updated
-  if(sessionJSON){
-    sessionJSON.locus = locusString
-    setSessionJSON(sessionJSON)
-  }
-  else{
-    createSessionObj
-  }
+  setSessionJSON((previousSessionJSON: Session) => {
+    previousSessionJSON.locus = locusString
+    //use spread to create new object and trigger rerender
+    return previousSessionJSON
+  })
 }
 
 export const createLocusString = (referenceFrameList: ReferenceFrame[]): string => {

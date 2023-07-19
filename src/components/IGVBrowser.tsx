@@ -32,9 +32,9 @@ interface IGVBrowserProps {
   featureSearchUrl: string;
   genome: string;
   locus?: string;
-  onTrackRemoved?: (track: string, sessionJSON:Session, setSessionJSON: any) => void;
+  onTrackRemoved?: (track: string, setSessionJSON: any) => void;
   onBrowserLoad?: (Browser: any) => void;
-  updateSessionLocus?: (locusString: string, sessionJSON: Session, setSessionJSON: any) => void;
+  updateSessionLocus?: (locusString: string, setSessionJSON: any) => void;
   tracks: TrackBaseOptions[];
 }
 
@@ -133,13 +133,14 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.on("trackclick", trackPopover);
 
         // perform action in encapsulating component if track is removed
+        //callback does not get the updated value of sessionJSON so functional form of the setter is used
         browser.on("trackremoved", function (track: any) {
-          onTrackRemoved && onTrackRemoved(track.config.id, sessionJSON, setSessionJSON);
+          onTrackRemoved && onTrackRemoved(track.config.id, setSessionJSON);
         });
 
         browser.on("locuschange", function (referenceFrameList: ReferenceFrame[]) {
           !isDragging.current && sessionJSON && 
-          updateSessionLocus(createLocusString(referenceFrameList), sessionJSON, setSessionJSON)
+          updateSessionLocus(createLocusString(referenceFrameList), setSessionJSON)
         })
 
         browser.on("trackdrag", function () {
@@ -152,7 +153,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.on("trackdragend", function () {
           isDragging.current = false
           const currentLoci: string = browser.currentLoci()
-          updateSessionLocus(currentLoci, sessionJSON, setSessionJSON)
+          updateSessionLocus(currentLoci, setSessionJSON)
         })
 
         // add browser to state
