@@ -63,22 +63,20 @@ export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: an
   }
 }
 
-export const onLocusChange = (referenceFrameList: ReferenceFrame[]) => {
+export const updateSessionLocus = (locusString: string, sessionJSON: Session, setSessionJSON: any) => {
+  //assumes one reference frame
   //function gets called once on the beginning of the drag and once upon completion
-  console.log(referenceFrameList)
-  
-  
+  //Also gets called any other time the the locus is updated
+  if(sessionJSON){
+    sessionJSON.locus = locusString
+    setSessionJSON(sessionJSON)
+  }
+  else{
+    createSessionObj
+  }
 }
 
-export const createReferenceFrames = (currentLociString: string): ReferenceFrame[] => {
-  //currently assumes one reference frame
-  const [chr, interval] = currentLociString.split(':')
-  const [start, end] = interval.split('-')
-  const reference: ReferenceFrame = {
-    chr: chr,
-    start: parseFloat(start),
-    end: parseFloat(end)
-  }
-  //returned as an array to match the format of the onLocusChange event
-  return [reference]
+export const createLocusString = (referenceFrameList: ReferenceFrame[]): string => {
+  const frame = referenceFrameList[0]
+  return `${frame.chr}:${frame.start}-${frame.end}`
 }

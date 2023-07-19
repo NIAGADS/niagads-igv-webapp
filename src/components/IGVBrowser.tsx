@@ -17,7 +17,7 @@ import {
   getLoadedTracks,
   removeTrackById,
   removeAndLoadTracks,
-  createReferenceFrames
+  createLocusString
 } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
@@ -34,7 +34,7 @@ interface IGVBrowserProps {
   locus?: string;
   onTrackRemoved?: (track: string, sessionJSON:Session, setSessionJSON: any) => void;
   onBrowserLoad?: (Browser: any) => void;
-  onLocusChange?: (referenceFrameList: any) => void;
+  updateSessionLocus?: (locusString: string, sessionJSON: Session, setSessionJSON: any) => void;
   tracks: TrackBaseOptions[];
 }
 
@@ -44,7 +44,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   locus,
   onBrowserLoad,
   onTrackRemoved,
-  onLocusChange,
+  updateSessionLocus,
   tracks,
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
@@ -81,6 +81,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       if(sessionJSON != null) {
         removeAndLoadTracks(sessionJSON.tracks, browser);
         if(sessionJSON.hasOwnProperty("roi")) removeAndLoadROIs(sessionJSON.roi, browser);
+        if(sessionJSON.hasOwnProperty("locus")) browser.search(sessionJSON.locus)
       }
       else {
         removeAndLoadTracks(tracks, browser);
@@ -137,7 +138,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         });
 
         browser.on("locuschange", function (referenceFrameList: ReferenceFrame[]) {
-          onLocusChange && !isDragging.current && onLocusChange(referenceFrameList)
+          !isDragging.current && sessionJSON && 
+          updateSessionLocus(createLocusString(referenceFrameList), sessionJSON, setSessionJSON)
         })
 
         browser.on("trackdrag", function () {
@@ -150,8 +152,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.on("trackdragend", function () {
           isDragging.current = false
           const currentLoci: string = browser.currentLoci()
-          const referenceFrame = createReferenceFrames(currentLoci)
-          onLocusChange(referenceFrame)
+          updateSessionLocus(currentLoci, sessionJSON, setSessionJSON)
         })
 
         // add browser to state
