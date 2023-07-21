@@ -17,7 +17,8 @@ import {
   getLoadedTracks,
   removeTrackById,
   removeAndLoadTracks,
-  createLocusString
+  createLocusString,
+  removeTrackFromList
 } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
@@ -32,9 +33,8 @@ interface IGVBrowserProps {
   featureSearchUrl: string;
   genome: string;
   locus?: string;
-  onTrackRemoved?: (track: string, setSessionJSON: any) => void;
+  onTrackRemoved?: (track: string) => void;
   onBrowserLoad?: (Browser: any) => void;
-  updateSessionLocus?: (locusString: string, setSessionJSON: any) => void;
   tracks: TrackBaseOptions[];
 }
 
@@ -44,7 +44,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   locus,
   onBrowserLoad,
   onTrackRemoved,
-  updateSessionLocus,
   tracks,
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
@@ -85,7 +84,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       }
       else {
         removeAndLoadTracks(tracks, browser);
-        setSessionJSON(createSessionObj(tracks));
+        onBrowserChange("initialLoad", null)
       }
     }
   }, [browserIsLoaded, memoOptions, tracks]);
@@ -135,12 +134,12 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         // perform action in encapsulating component if track is removed
         //callback does not get the updated value of sessionJSON so functional form of the setter is used
         browser.on("trackremoved", function (track: any) {
-          onTrackRemoved && onTrackRemoved(track.config.id, setSessionJSON);
+          onTrackRemoved && onBrowserChange("trackRemoved", track)
         });
 
         browser.on("locuschange", function (referenceFrameList: ReferenceFrame[]) {
           !isDragging.current && sessionJSON && 
-          updateSessionLocus(createLocusString(referenceFrameList), setSessionJSON)
+          onBrowserChange("locus", createLocusString(referenceFrameList))
         })
 
         browser.on("trackdrag", function () {
@@ -153,7 +152,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         browser.on("trackdragend", function () {
           isDragging.current = false
           const currentLoci: string = browser.currentLoci()
-          updateSessionLocus(currentLoci, setSessionJSON)
+          onBrowserChange("locus", currentLoci)
         })
 
         // add browser to state
@@ -166,6 +165,37 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [onBrowserLoad, memoOptions]);
 
+  const onBrowserChange = (change: string, update: any) => {
+    switch(change){
+      case "locus":
+        //update the locus in the session
+        setSessionJSON((previousSession) => {
+          previousSession.locus = update
+          return previousSession
+        })
+        break
+      case "trackRemoved":
+        setSessionJSON((previousSession) => {
+          previousSession.tracks = removeTrackFromList(previousSession.tracks, update)
+          return previousSession
+        })
+        break
+      case "addTracks":
+        sessionJSON.tracks = sessionJSON.tracks.concat(update)
+        setSessionJSON(sessionJSON)
+        break
+      case "loadSession":
+        setSessionJSON(createSessionObj(update.tracks))
+        break
+      case "initialLoad":
+        //should this also be the default
+        setSessionJSON(createSessionObj(tracks))
+        break
+      default:
+        console.error("change param provided to onBrowserChange does not exist")
+    }
+  }
+
   //rearrange
   const handleSaveSession = () => {
     if (browserIsLoaded) {
@@ -176,18 +206,17 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   };
 
+  //TODO: update to handle ROIs and locus
   const handleLoadFileClick = (jsonObj: Session) => {
     removeAndLoadTracks(jsonObj.tracks, browser);
-    const newSession = createSessionObj(jsonObj.tracks);
-    setSessionJSON(newSession);
-
+    onBrowserChange("loadSession", jsonObj)
   }
 
   return (
     <>
       <LoadSession handleLoadFileClick={handleLoadFileClick} />
       <SaveSession handleSave={handleSaveSession} />
-      <AddTracksButton browser={browser} sessionJSON={sessionJSON} setSessionJSON={setSessionJSON} />
+      <AddTracksButton browser={browser} onBrowserChange={onBrowserChange}/>
       <span style={{ width: "100%" }} id="genome-browser" />
     </>
   );

@@ -22,9 +22,7 @@ export default function AddTracksButton(props: any) {
                 if(jsonObj.hasOwnProperty("tracks")) newTracks = jsonObj.tracks
                 else newTracks = jsonObj
                 loadTracks(newTracks, props.browser)
-                let curTracks = props.sessionJSON.tracks
-                curTracks = curTracks.concat(newTracks)
-                props.setSessionJSON({tracks: curTracks})
+                props.onBrowserChange("addTracks", newTracks)
             }
             catch(error) {
                 console.error(error)

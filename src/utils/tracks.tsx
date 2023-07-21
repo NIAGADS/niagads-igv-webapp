@@ -49,16 +49,15 @@ export const removeAndLoadTracks = (tracks: TrackBaseOptions[], browser: any) =>
         loadTracks(tracks, browser);
   }
 
-export const onTrackRemoved = (id: string, setSessionJSON: any) => {
-    //use functional form of setter to get up to date sessionJSON
-    setSessionJSON((sessionJSON : Session) => {
-        for(let track of sessionJSON.tracks) {
-            if(track.id === id) {
-                sessionJSON.tracks = sessionJSON.tracks.filter(track => track.id !== id)
-                return sessionJSON
-            }
-        }
-        return sessionJSON
-    })
+export const onTrackRemoved = (id: string) => {
     
+}
+
+export const removeTrackFromList = (tracks: TrackBaseOptions[], removedTrack: TrackBaseOptions): TrackBaseOptions[] => {
+    for(let i = 0; i < tracks.length; i++) {
+        if(tracks[i].id === removedTrack.id){
+            tracks.splice(i, 1)
+        }
+    }
+    return tracks
 }
