@@ -103,19 +103,20 @@ const formatPopoverData = (data: any) => {
         let value = null
         if(row.hasOwnProperty('value')) value = row.value
         else continue
-        // if value is a number, round to two decimal places. 
-        //If the number is in scientific notation, round to two decimal places plus the exponent
+
         if(!isNaN(value) && value !== null) {
-            if(value.toString().includes("e")) {
-                const [number, exponent] = value.toString().split("e")
-                value = parseFloat(number).toFixed(2) + "e" + exponent
+            // if the number is in scientific notation or greater than 1, round to two decimal places plus the exponent
+            if(value.toString().includes("e") || value > 1) {
+                if(value.toString().includes("e")) {
+                    const [number, exponent] = value.toString().split("e")
+                    value = parseFloat(number).toFixed(2) + "e" + exponent
+                } else {
+                    value = parseFloat(value).toFixed(2)
+                }
             }
-            //if the value is < 0.01, convert to scientific notation
-            else if(value < 0.01) {
-                value = value.toExponential(2)
-            }
-            else {
-                value = parseFloat(value).toFixed(2)
+            //If the number is more than 5 digits, round to 5.
+            else if(value.toString().length > 6) {
+                value = parseFloat(value).toFixed(5)
             }
             row.value = value
         }
