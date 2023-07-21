@@ -189,7 +189,7 @@ class VariantPValueTrack extends igv.TrackBase {
                         if (f.hasOwnProperty('gene_id')) {
                             let href = recHref + '/gene/' + f.gene_id;
                             const geneDisplay = f.hasOwnProperty('gene_symbol') ? f.gene_symbol : f.gene_id;
-                            data.push({name: 'Target Gene', html: `<a target="_blank" href="${href}">${geneDisplay}</a>`, title: "View GenomicsDB record for gene " + geneDisplay})
+                            data.push({name: 'Target', html: `<a target="_blank" href="${href}">${geneDisplay}</a>`, title: "View GenomicsDB record for gene " + geneDisplay})
                         }
                     count++
                 }
