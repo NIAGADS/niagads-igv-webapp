@@ -182,14 +182,15 @@ class VariantPValueTrack extends igv.TrackBase {
                         break
                     }
                     const pos = f.end; // IGV is zero-based, so end of the variant is the position
-                        const href = recHref + '/variant/' + f.record_pk;
+                    let href = recHref + '/variant/' + f.record_pk;
                         data.push({name: 'Location:', value: f.chr + ':' + pos})
-                        if (f.hasOwnProperty('gene_id')) {
-                            data.push({name: 'Gene', value: f.gene_id})
-                        }
                         data.push({name: 'p-Value:', value: f.pvalue})  
                         data.push({name: 'Variant:', html: `<a target="_blank" href="${href}">${f.variant}</a>`, title: "View GenomicsDB record for variant " + f.variant})
-
+                        if (f.hasOwnProperty('gene_id')) {
+                            let href = recHref + '/gene/' + f.gene_id;
+                            const geneDisplay = f.hasOwnProperty('gene_symbol') ? f.gene_symbol : f.gene_id;
+                            data.push({name: 'Target Gene', html: `<a target="_blank" href="${href}">${geneDisplay}</a>`, title: "View GenomicsDB record for gene " + geneDisplay})
+                        }
                     count++
                 }
             }
