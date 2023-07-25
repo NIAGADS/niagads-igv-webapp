@@ -133,26 +133,31 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         // perform action in encapsulating component if track is removed
         //callback does not get the updated value of sessionJSON so functional form of the setter is used
-        browser.on("trackremoved", function (track: any) {
-          onTrackRemoved && onBrowserChange("trackRemoved", track)
+        browser.on("trackremoved", (track: any) => {
+          onTrackRemoved && onTrackRemoved(track)
+          onBrowserChange("trackRemoved", track)
         });
 
-        browser.on("locuschange", function (referenceFrameList: ReferenceFrame[]) {
+        browser.on("locuschange", (referenceFrameList: ReferenceFrame[]) => {
           !isDragging.current && sessionJSON && 
           onBrowserChange("locus", createLocusString(referenceFrameList))
         })
 
-        browser.on("trackdrag", function () {
+        browser.on("trackdrag", () => {
           if(!isDragging.current){
             isDragging.current = true
           } 
-
         })
 
-        browser.on("trackdragend", function () {
+        browser.on("trackdragend", () => {
           isDragging.current = false
           const currentLoci: string = browser.currentLoci()
           onBrowserChange("locus", currentLoci)
+        })
+
+        browser.on("updateuserdefinedroi", function (manager: any) {
+          console.log(manager)
+          alert("roi updated")
         })
 
         // add browser to state
