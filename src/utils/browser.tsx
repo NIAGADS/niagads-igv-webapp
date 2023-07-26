@@ -82,7 +82,7 @@ export const createSessionObj = (browser: any, previousSession: Session, default
       break
     case "trackRemoved" || "loadSession" || "saveSession":
       sessionObj = {
-        tracks: getTracksForSession(browser, defaultTracks),
+        tracks: formatTracksForSesssion(getTracksForSession(browser, defaultTracks)),
         roi: previousSession.roi,
         locus: previousSession.locus
       }

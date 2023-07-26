@@ -139,7 +139,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         browser.on("locuschange", (referenceFrameList: ReferenceFrame[]) => {
           !isDragging.current && sessionJSON && 
-          onBrowserChange("locus")
+          onBrowserChange("locusChange")
         })
 
         browser.on("trackdrag", () => {
@@ -150,7 +150,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         browser.on("trackdragend", () => {
           isDragging.current = false
-          onBrowserChange("locus")
+          onBrowserChange("locusChange")
         })
 
         browser.on("updateuserdefinedroi", function (manager: any) {
@@ -169,41 +169,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   }, [onBrowserLoad, memoOptions]);
 
   const onBrowserChange = (changeType: string) => {
-    setBrowser((currentBrowser: any) => {
-      setSessionJSON((currentSesssionJSON) => {
-        return createSessionObj(currentBrowser, currentSesssionJSON, tracks, changeType)
-      })
-      return currentBrowser
-    })
-    
-    // switch(change){
-    //   case "locus":
-    //     //update the locus in the session
-    //     setSessionJSON((previousSession) => {
-    //       previousSession.locus = update
-    //       return previousSession
-    //     })
-    //     break
-    //   case "trackRemoved":
-    //     setSessionJSON((previousSession) => {
-    //       previousSession.tracks = removeTrackFromList(previousSession.tracks, update)
-    //       return previousSession
-    //     })
-    //     break
-    //   case "addTracks":
-    //     sessionJSON.tracks = sessionJSON.tracks.concat(update)
-    //     setSessionJSON(sessionJSON)
-    //     break
-    //   case "loadSession":
-    //     setSessionJSON(createSessionObj(update.tracks))
-    //     break
-    //   case "initialLoad":
-    //     //should this also be the default
-    //     setSessionJSON(createSessionObj(tracks))
-    //     break
-    //   default:
-    //     console.error("change param provided to onBrowserChange does not exist")
-    // }
+    createSessionObj(browser, sessionJSON, tracks, changeType)
   }
 
   //rearrange
