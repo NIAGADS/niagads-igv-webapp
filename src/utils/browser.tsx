@@ -1,6 +1,6 @@
 import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/tracks";
 import { decodeBedXY } from "@decoders/bedDecoder";
-import { resolveTrackReader, getLoadedTracks } from "./tracks";
+import { resolveTrackReader, getLoadedTrackIDs, getLoadedTracks } from "./tracks";
 import { get } from "lodash"
 import { ReferenceFrame } from "@browser-types/browserObjects";
 
@@ -30,38 +30,13 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
   }
 }
 
-// export const createSessionObj = (tracks: TrackBaseOptions[]): Session => {
-
-//   //remove sequence
-//   tracks = tracks.filter(track => (track.type !== "sequence"))
-  
-//   //remove refereence object
-//   tracks = tracks.filter(track => (track.id !== "reference"))
-
-//   //remove any functions
-//   for(let track of tracks) {
-//     for(let prop in track) {
-//       if(typeof prop === 'function') delete track[prop];
-//     }
-//   }
-
-//   //TODO: locus and roi are currently set to default values
-//   let sessionObj: Session = {
-//     tracks: tracks,
-//     roi: [],
-//     locus: "chr19:1,038,997-1,066,572",
-//   }
-
-//   return sessionObj
-// }
-
-export const createSessionObj = (browser: any, previousSession: Session, defaultTracks: TrackBaseOptions[], changeType: string) => {
+export const createSessionObj = (browser: any, previousSession: Session, changeType: string) => {
   let sessionObj : Session = null
 
   switch(changeType) {
     case "initialLoad":
       sessionObj = {
-        tracks: formatTracksForSesssion(defaultTracks),
+        tracks: getLoadedTracks(browser),
         roi: [],
         locus: "chr19:1,038,997-1,066,572"
       }
@@ -80,19 +55,22 @@ export const createSessionObj = (browser: any, previousSession: Session, default
         locus: previousSession.locus
       }
       break
-    case "trackRemoved" || "loadSession" || "saveSession":
+    case "trackRemoved":
+    case "loadSession": 
+    case "saveSession":
       sessionObj = {
-        tracks: formatTracksForSesssion(getTracksForSession(browser, defaultTracks)),
+        tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
         roi: previousSession.roi,
         locus: previousSession.locus
       }
+      break
   }
 
   return sessionObj
 }
 
 export const getTracksForSession = (browser: any, availableTracks: TrackBaseOptions[]): TrackBaseOptions[] => {
-  const loadedTracks: string[] = getLoadedTracks(browser)
+  const loadedTracks: string[] = getLoadedTrackIDs(browser)
   const tracks: TrackBaseOptions[] = []
   for(let trackID of loadedTracks){
     for(let track of availableTracks){
@@ -103,7 +81,7 @@ export const getTracksForSession = (browser: any, availableTracks: TrackBaseOpti
   return tracks
 }
 
-export const formatTracksForSesssion = (tracks: TrackBaseOptions[]): TrackBaseOptions[] => {
+export const removeFunctionsInTracks = (tracks: TrackBaseOptions[]): TrackBaseOptions[] => {
   //remove sequence
   tracks = tracks.filter(track => (track.type !== "sequence"))
   

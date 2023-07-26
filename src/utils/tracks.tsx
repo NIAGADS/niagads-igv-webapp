@@ -10,12 +10,17 @@ export const getTrackID = (trackView: any) => {
     return "id" in track ? track.id : track.config.id;
 };
 
-export const getLoadedTracks = (browser: any) =>
+export const getLoadedTrackIDs = (browser: any): string[] =>
     get(browser, "trackViews", [])
-        .map((view: any) => view)
-        .filter((track: any) => !ALWAYS_ON_TRACKS.includes(getTrackID(track)));
+        .map((view: any) => getTrackID(view))
+        .filter((track: string) => !ALWAYS_ON_TRACKS.includes(track));
 
-export const trackIsLoaded = (config: any, browser: any) => getLoadedTracks(browser).includes(config.id);
+export const getLoadedTracks = (browser: any): TrackBaseOptions[] =>
+    get(browser, "trackViews", [])
+        .map((view: any) => view.track.hasOwnProperty("config") ? view.track.config : view.track)
+        .filter((track: any) => (!ALWAYS_ON_TRACKS.includes(track.id)) && !(track.type === "sequence"));
+
+export const trackIsLoaded = (config: any, browser: any) => getLoadedTrackIDs(browser).includes(config.id);
 
 // we want to find track by ID b/c some names may be duplicated; so modeled after:
 // https://github.com/igvteam/igv.js/blob/0dfb1f7b02d9660ff1ef0169899c4711496158e8/js/browser.js#L1104
@@ -37,7 +42,7 @@ export const resolveTrackReader = (trackType: string, config: any): any => {
 };
 
 export const removeAndLoadTracks = (tracks: TrackBaseOptions[], browser: any) => {
-    const loadedTracks = getLoadedTracks(browser);
+    const loadedTracks = getLoadedTrackIDs(browser);
         // if any tracks are loaded, remove them
         if (Object.keys(loadedTracks).length !== 0) {
           for (let id of loadedTracks) {

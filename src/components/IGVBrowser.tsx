@@ -100,7 +100,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           let updatedSession: Session = null
           if(sessionJSON) updatedSession = sessionJSON
           //if there's no session then create one with default tracks and locus
-          else updatedSession = createSessionObj(browser, sessionJSON, tracks, "initialLoad")
+          else updatedSession = createSessionObj(browser, sessionJSON, "initialLoad")
           updatedSession.roi = ROISets
           setSessionJSON(updatedSession)
         }
@@ -171,7 +171,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(browserChange !== "none") {
-      createSessionObj(browser, sessionJSON, tracks, browserChange)
+      setSessionJSON(createSessionObj(browser, sessionJSON, browserChange))
       setBrowserChange("none")
     }
   }, [browserChange])
@@ -183,7 +183,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   //rearrange
   const handleSaveSession = () => {
     if (browserIsLoaded) {
-      let sessionObj = createSessionObj(browser, sessionJSON, tracks, "saveSession");
+      let sessionObj = createSessionObj(browser, sessionJSON, "saveSession");
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session");
     } else {
       alert("Wait until the browser is loaded before saving");
