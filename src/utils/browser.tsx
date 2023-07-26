@@ -51,7 +51,7 @@ export const createSessionObj = (browser: any, previousSession: Session, changeT
     case "roiChange":
       sessionObj = {
         tracks: previousSession.tracks,
-        roi: browser.getUserDefinedROIs,
+        roi: browser.getUserDefinedROIs(),
         locus: previousSession.locus
       }
       break

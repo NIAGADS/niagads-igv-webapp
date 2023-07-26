@@ -154,9 +154,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           onBrowserChange("locusChange")
         })
 
-        browser.on("updateuserdefinedroi", function (manager: any) {
-          console.log(manager)
-          alert("roi updated")
+        browser.on("updateuserdefinedroi", (manager: any) => {
+          onBrowserChange("roiChange")
         })
 
         // add browser to state
