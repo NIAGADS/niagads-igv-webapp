@@ -7,3 +7,12 @@ export interface ReferenceFrame {
     id?: string,
     locusSearchString?: string,
 }
+
+export type BrowserChangeEvent = 
+"initialload"
+| "locuschange"
+| "updateuserdefinedroi"
+| "trackremoved"
+| "loadsession"
+| "savesession"
+| "none"

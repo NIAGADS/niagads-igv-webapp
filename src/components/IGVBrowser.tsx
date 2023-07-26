@@ -24,7 +24,7 @@ import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
 import { useSessionStorage } from "usehooks-ts";
 import AddTracksButton from "./AddTracksButton";
-import { ReferenceFrame } from "@browser-types/browserObjects";
+import { BrowserChangeEvent, ReferenceFrame } from "@browser-types/browserObjects";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -47,7 +47,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
-  const [browserChange, setBrowserChange] = useState<string>('none');
+  const [browserChange, setBrowserChange] = useState<BrowserChangeEvent>('none');
   const [sessionJSON, setSessionJSON] = useSessionStorage<Session>('sessionJSON', null)
   const isDragging = useRef<boolean>(false)
   
@@ -84,7 +84,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       }
       else {
         removeAndLoadTracks(tracks, browser);
-        onBrowserChange("initialLoad")
+        onBrowserChange("initialload")
       }
     }
   }, [browserIsLoaded, memoOptions, tracks]);
@@ -100,7 +100,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           let updatedSession: Session = null
           if(sessionJSON) updatedSession = sessionJSON
           //if there's no session then create one with default tracks and locus
-          else updatedSession = createSessionObj(browser, sessionJSON, "initialLoad")
+          else updatedSession = createSessionObj(browser, sessionJSON, "initialload")
           updatedSession.roi = ROISets
           setSessionJSON(updatedSession)
         }
@@ -135,12 +135,12 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         //callback does not get the updated value of sessionJSON so functional form of the setter is used
         browser.on("trackremoved", (track: any) => {
           onTrackRemoved && onTrackRemoved(track)
-          onBrowserChange("trackRemoved")
+          onBrowserChange("trackremoved")
         });
 
         browser.on("locuschange", (referenceFrameList: ReferenceFrame[]) => {
           !isDragging.current && sessionJSON && 
-          onBrowserChange("locusChange")
+          onBrowserChange("locuschange")
         })
 
         browser.on("trackdrag", () => {
@@ -151,11 +151,11 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         browser.on("trackdragend", () => {
           isDragging.current = false
-          onBrowserChange("locusChange")
+          onBrowserChange("locuschange")
         })
 
         browser.on("updateuserdefinedroi", (manager: any) => {
-          onBrowserChange("roiChange")
+          onBrowserChange("updateuserdefinedroi")
         })
 
         // add browser to state
@@ -175,14 +175,14 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [browserChange])
 
-  const onBrowserChange = useCallback((changeType: string) => {
+  const onBrowserChange = useCallback((changeType: BrowserChangeEvent) => {
     setBrowserChange(changeType)
   }, [])
 
   //rearrange
   const handleSaveSession = () => {
     if (browserIsLoaded) {
-      let sessionObj = createSessionObj(browser, sessionJSON, "saveSession");
+      let sessionObj = createSessionObj(browser, sessionJSON, "savesession");
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session");
     } else {
       alert("Wait until the browser is loaded before saving");
@@ -192,7 +192,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   //TODO: update to handle ROIs and locus
   const handleLoadFileClick = (jsonObj: Session) => {
     removeAndLoadTracks(jsonObj.tracks, browser);
-    onBrowserChange("loadSession")
+    onBrowserChange("loadsession")
   }
 
   return (

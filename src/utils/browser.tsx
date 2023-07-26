@@ -2,7 +2,7 @@ import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/track
 import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader, getLoadedTrackIDs, getLoadedTracks } from "./tracks";
 import { get } from "lodash"
-import { ReferenceFrame } from "@browser-types/browserObjects";
+import { BrowserChangeEvent, ReferenceFrame } from "@browser-types/browserObjects";
 
 const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE"];
 
@@ -30,40 +30,42 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
   }
 }
 
-export const createSessionObj = (browser: any, previousSession: Session, changeType: string) => {
+export const createSessionObj = (browser: any, previousSession: Session, changeType: BrowserChangeEvent) => {
   let sessionObj : Session = null
 
   switch(changeType) {
-    case "initialLoad":
+    case "initialload":
       sessionObj = {
         tracks: getLoadedTracks(browser),
         roi: [],
         locus: "chr19:1,038,997-1,066,572"
       }
       break
-    case "locusChange":
+    case "locuschange":
       sessionObj = {
         tracks: previousSession.tracks,
         roi: previousSession.roi,
         locus: browser.currentLoci()
       }
       break
-    case "roiChange":
+    case "updateuserdefinedroi":
       sessionObj = {
         tracks: previousSession.tracks,
         roi: browser.getUserDefinedROIs(),
         locus: previousSession.locus
       }
       break
-    case "trackRemoved":
-    case "loadSession": 
-    case "saveSession":
+    case "trackremoved":
+    case "loadsession": 
+    case "savesession":
       sessionObj = {
         tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
         roi: previousSession.roi,
         locus: previousSession.locus
       }
       break
+    default: 
+      console.error("changeType is not an expected value, it is: ", changeType)
   }
 
   return sessionObj
