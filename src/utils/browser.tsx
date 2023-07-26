@@ -3,6 +3,7 @@ import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader, getLoadedTrackIDs, getLoadedTracks } from "./tracks";
 import { get } from "lodash"
 import { BrowserChangeEvent, ReferenceFrame } from "@browser-types/browserObjects";
+import { DEFAULT_FLANK } from "@data/_constants";
 
 const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE"];
 
@@ -111,4 +112,19 @@ export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: an
 export const createLocusString = (referenceFrameList: ReferenceFrame[]): string => {
   const frame = referenceFrameList[0]
   return `${frame.chr}:${frame.start}-${frame.end}`
+}
+
+export const addDefaultFlank = (locus: string) => {
+  let [chr, range] = locus.split(":", 1)
+  let [start, end] = range.split("-", 1)
+
+  let numStart = parseInt(start) + DEFAULT_FLANK
+  let numEnd = parseInt(end) + DEFAULT_FLANK
+
+  return `${chr}:${numStart}-${numEnd}`
+
+}
+
+export const createROIFromLocusRange = (roiString: string): ROISet => {
+    
 }
