@@ -10,7 +10,7 @@ export const getTrackID = (trackView: any) => {
     return "id" in track ? track.id : track.config.id;
 };
 
-export const getLoadedTracks = (browser: any): string[] =>
+export const getLoadedTracks = (browser: any) =>
     get(browser, "trackViews", [])
         .map((view: any) => getTrackID(view))
         .filter((track: string) => !ALWAYS_ON_TRACKS.includes(track));

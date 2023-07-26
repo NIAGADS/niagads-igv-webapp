@@ -14,7 +14,6 @@ import {
   loadTracks,
   createSessionObj,
   downloadObjectAsJson,
-  getLoadedTracks,
   removeTrackById,
   removeAndLoadTracks,
   createLocusString,
@@ -84,7 +83,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       }
       else {
         removeAndLoadTracks(tracks, browser);
-        onBrowserChange("initialLoad", null)
+        onBrowserChange("initialLoad")
       }
     }
   }, [browserIsLoaded, memoOptions, tracks]);
@@ -100,7 +99,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           let updatedSession: Session = null
           if(sessionJSON) updatedSession = sessionJSON
           //if there's no session then create one with default tracks and locus
-          else updatedSession = createSessionObj(tracks)
+          else updatedSession = createSessionObj(browser, sessionJSON, tracks, "initialLoad")
           updatedSession.roi = ROISets
           setSessionJSON(updatedSession)
         }
@@ -135,12 +134,12 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         //callback does not get the updated value of sessionJSON so functional form of the setter is used
         browser.on("trackremoved", (track: any) => {
           onTrackRemoved && onTrackRemoved(track)
-          onBrowserChange("trackRemoved", track)
+          onBrowserChange("trackRemoved")
         });
 
         browser.on("locuschange", (referenceFrameList: ReferenceFrame[]) => {
           !isDragging.current && sessionJSON && 
-          onBrowserChange("locus", createLocusString(referenceFrameList))
+          onBrowserChange("locus")
         })
 
         browser.on("trackdrag", () => {
@@ -151,8 +150,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
         browser.on("trackdragend", () => {
           isDragging.current = false
-          const currentLoci: string = browser.currentLoci()
-          onBrowserChange("locus", currentLoci)
+          onBrowserChange("locus")
         })
 
         browser.on("updateuserdefinedroi", function (manager: any) {
@@ -170,41 +168,48 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [onBrowserLoad, memoOptions]);
 
-  const onBrowserChange = (change: string, update: any) => {
-    switch(change){
-      case "locus":
-        //update the locus in the session
-        setSessionJSON((previousSession) => {
-          previousSession.locus = update
-          return previousSession
-        })
-        break
-      case "trackRemoved":
-        setSessionJSON((previousSession) => {
-          previousSession.tracks = removeTrackFromList(previousSession.tracks, update)
-          return previousSession
-        })
-        break
-      case "addTracks":
-        sessionJSON.tracks = sessionJSON.tracks.concat(update)
-        setSessionJSON(sessionJSON)
-        break
-      case "loadSession":
-        setSessionJSON(createSessionObj(update.tracks))
-        break
-      case "initialLoad":
-        //should this also be the default
-        setSessionJSON(createSessionObj(tracks))
-        break
-      default:
-        console.error("change param provided to onBrowserChange does not exist")
-    }
+  const onBrowserChange = (changeType: string) => {
+    setBrowser((currentBrowser: any) => {
+      setSessionJSON((currentSesssionJSON) => {
+        return createSessionObj(currentBrowser, currentSesssionJSON, tracks, changeType)
+      })
+      return currentBrowser
+    })
+    
+    // switch(change){
+    //   case "locus":
+    //     //update the locus in the session
+    //     setSessionJSON((previousSession) => {
+    //       previousSession.locus = update
+    //       return previousSession
+    //     })
+    //     break
+    //   case "trackRemoved":
+    //     setSessionJSON((previousSession) => {
+    //       previousSession.tracks = removeTrackFromList(previousSession.tracks, update)
+    //       return previousSession
+    //     })
+    //     break
+    //   case "addTracks":
+    //     sessionJSON.tracks = sessionJSON.tracks.concat(update)
+    //     setSessionJSON(sessionJSON)
+    //     break
+    //   case "loadSession":
+    //     setSessionJSON(createSessionObj(update.tracks))
+    //     break
+    //   case "initialLoad":
+    //     //should this also be the default
+    //     setSessionJSON(createSessionObj(tracks))
+    //     break
+    //   default:
+    //     console.error("change param provided to onBrowserChange does not exist")
+    // }
   }
 
   //rearrange
   const handleSaveSession = () => {
     if (browserIsLoaded) {
-      let sessionObj = createSessionObj(sessionJSON.tracks);
+      let sessionObj = createSessionObj(browser, sessionJSON, tracks, "saveSession");
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session");
     } else {
       alert("Wait until the browser is loaded before saving");
@@ -214,7 +219,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   //TODO: update to handle ROIs and locus
   const handleLoadFileClick = (jsonObj: Session) => {
     removeAndLoadTracks(jsonObj.tracks, browser);
-    onBrowserChange("loadSession", jsonObj)
+    onBrowserChange("loadSession")
   }
 
   return (
