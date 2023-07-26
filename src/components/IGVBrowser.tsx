@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useState, useEffect, useRef } from "react";
+import React, { useLayoutEffect, useMemo, useState, useEffect, useRef, useCallback } from "react";
 import igv from "igv/dist/igv.esm";
 import noop from "lodash.noop";
 import find from "lodash.find";
@@ -47,6 +47,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 }) => {
   const [browserIsLoaded, setBrowserIsLoaded] = useState<boolean>(false);
   const [browser, setBrowser] = useState<any>(null);
+  const [browserChange, setBrowserChange] = useState<string>('none');
   const [sessionJSON, setSessionJSON] = useSessionStorage<Session>('sessionJSON', null)
   const isDragging = useRef<boolean>(false)
   
@@ -168,9 +169,16 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [onBrowserLoad, memoOptions]);
 
-  const onBrowserChange = (changeType: string) => {
-    createSessionObj(browser, sessionJSON, tracks, changeType)
-  }
+  useEffect(() => {
+    if(browserChange !== "none") {
+      createSessionObj(browser, sessionJSON, tracks, browserChange)
+      setBrowserChange("none")
+    }
+  }, [browserChange])
+
+  const onBrowserChange = useCallback((changeType: string) => {
+    setBrowserChange(changeType)
+  }, [])
 
   //rearrange
   const handleSaveSession = () => {
