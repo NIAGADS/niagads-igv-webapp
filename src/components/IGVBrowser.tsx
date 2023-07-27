@@ -28,7 +28,7 @@ import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
 import { useSessionStorage } from "usehooks-ts";
-import { BrowserChangeEvent, ReferenceFrame } from "@browser-types/browserObjects";
+import { BrowserChangeEvent, QueryParams, ReferenceFrame } from "@browser-types/browserObjects";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -82,18 +82,20 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     // setting initial session due to component load/reload
     if (browserIsLoaded && memoOptions && tracks) {
       const queryParams = getQueryParams()
-      if(sessionJSON != null) {
-        removeAndLoadTracks(sessionJSON.tracks, browser);
-        if(sessionJSON.hasOwnProperty("roi")) removeAndLoadROIs(sessionJSON.roi, browser);
-        if(sessionJSON.hasOwnProperty("locus")) browser.search(sessionJSON.locus)
-      }
-      else if(Object.keys(queryParams).length !== 0) {
+      
+      if(Object.keys(queryParams).length !== 0) {
         if(queryParams.hasOwnProperty("tracks")) removeAndLoadTracks(queryParams.tracks, browser)
         else removeAndLoadTracks(tracks, browser)
         if(queryParams.hasOwnProperty("locus")){ 
           browser.search(queryParams.locus)
           browser.loadROI(queryParams.roi)
         }
+        onBrowserChange("loadfromqueryparams")
+      }
+      else if(sessionJSON != null) {
+        removeAndLoadTracks(sessionJSON.tracks, browser);
+        if(sessionJSON.hasOwnProperty("roi")) removeAndLoadROIs(sessionJSON.roi, browser);
+        if(sessionJSON.hasOwnProperty("locus")) browser.search(sessionJSON.locus)
       }
       else {
         removeAndLoadTracks(tracks, browser);
@@ -204,7 +206,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           locus: sessionJSON.locus
         }
         break
-      case "loadsession": 
+      case "loadsession":
+      case "loadfromqueryparams": 
         sessionObj = {
           tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
           roi: [{features: await browser.getUserDefinedROIs(), isUserDefined: true}],

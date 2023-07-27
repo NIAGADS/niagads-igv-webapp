@@ -17,6 +17,7 @@ export type BrowserChangeEvent =
 | "trackremoved"
 | "loadsession"
 | "savesession"
+| "loadfromqueryparams"
 | "none"
 
 export interface QueryParams {
