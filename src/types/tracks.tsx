@@ -32,7 +32,6 @@ export interface IGVTrackOptions extends TrackBaseOptions {
 export interface Session {
     tracks: TrackBaseOptions[]
 
-    //TODO: currently optional because functionality isn't built yet but will be required in the future
     reference?: any
     roi?: ROISet[]
     locus?: any
@@ -49,5 +48,5 @@ export interface ROISet {
 export interface ROIFeature {
     chr: string,
     start: number,
-    end: number
+    end: number,
 }

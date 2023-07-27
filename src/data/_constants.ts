@@ -8,4 +8,3 @@ export const NIAGADS_GENOMICSDB_URL = "https://www.niagads.org"
     + (GENOME_BUILD.endsWith("38") ? "/genomics" : "/genomics37")
 export const FEATURE_INFO_BASE_URL = NIAGADS_GENOMICSDB_URL + "/app/record"
 export const FEATURE_SEARCH_ENDPOINT= (USE_PROXY ? "" : NIAGADS_GENOMICSDB_URL) + "/service/track/feature?id="
-

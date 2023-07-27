@@ -9,13 +9,14 @@ import {
   trackPopover,
 } from "@tracks/index";
 import { _genomes } from "@data/_igvGenomes";
-import { ROISet, Session, TrackBaseOptions } from "@browser-types/tracks";
+import { ROIFeature, ROISet, Session, TrackBaseOptions } from "@browser-types/tracks";
 import {
   loadTracks,
-  createSessionObj,
   downloadObjectAsJson,
   removeTrackById,
+  getLoadedTracks,
   removeAndLoadTracks,
+  removeFunctionsInTracks,
   createLocusString,
   removeTrackFromList,
   convertStringToTrackNames,
@@ -27,8 +28,7 @@ import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
 import { useSessionStorage } from "usehooks-ts";
-import AddTracksButton from "./AddTracksButton";
-import { BrowserChangeEvent, QueryParams, ReferenceFrame } from "@browser-types/browserObjects";
+import { BrowserChangeEvent, ReferenceFrame } from "@browser-types/browserObjects";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -102,29 +102,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      //check to see if current ROIs are different than the past ROIs
-      // && browser.roiManager.roiSets.length !== 0 &&!isEqual(prevROI, JSON.parse(JSON.stringify(browser.roiManager.roiSets)))
-      if(browser && browser.roiManager.roiSets.length !== 0){
-        const currentROIs = browser.getUserDefinedROIs()
-        if(!isEqual(currentROIs, JSON.parse(JSON.stringify(browser.roiManager.roiSets)))){
-          const ROISets = JSON.parse(JSON.stringify(browser.roiManager.roiSets))
-          let updatedSession: Session = null
-          if(sessionJSON) updatedSession = sessionJSON
-          //if there's no session then create one with default tracks and locus
-          else updatedSession = createSessionObj(browser, sessionJSON, "initialload")
-          updatedSession.roi = ROISets
-          setSessionJSON(updatedSession)
-        }
-      }
-    }, 1000);
-    
-    return () => clearInterval(intervalId);
-  }, [browserIsLoaded, browser]);
-
   const removeAndLoadROIs = (ROIs: ROISet[], browser: any) => {
-    console.log("ROIs: ", ROIs)
     browser.clearROIs()
     browser.loadROI(ROIs)
   }
@@ -144,15 +122,13 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         // custom track popovers
         browser.on("trackclick", trackPopover);
 
-        // perform action in encapsulating component if track is removed
-        //callback does not get the updated value of sessionJSON so functional form of the setter is used
         browser.on("trackremoved", (track: any) => {
           onTrackRemoved && onTrackRemoved(track)
           onBrowserChange("trackremoved")
         });
 
         browser.on("locuschange", (referenceFrameList: ReferenceFrame[]) => {
-          !isDragging.current && sessionJSON && 
+          !isDragging.current && 
           onBrowserChange("locuschange")
         })
 
@@ -183,7 +159,9 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
 
   useEffect(() => {
     if(browserChange !== "none") {
-      setSessionJSON(createSessionObj(browser, sessionJSON, browserChange))
+      createSessionObj(browserChange).then((sessionObj) => {
+        setSessionJSON(sessionObj)
+      })
       setBrowserChange("none")
     }
   }, [browserChange])
@@ -192,19 +170,71 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     setBrowserChange(changeType)
   }, [])
 
-  //rearrange
-  const handleSaveSession = () => {
+  const handleSaveSession = async () => {
     if (browserIsLoaded) {
-      let sessionObj = createSessionObj(browser, sessionJSON, "savesession");
+      let sessionObj = await createSessionObj("savesession");
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session");
     } else {
       alert("Wait until the browser is loaded before saving");
     }
   };
 
-  //TODO: update to handle ROIs and locus
+  const createSessionObj = async (changeType: BrowserChangeEvent) => {
+    let sessionObj : Session = null
+  
+    switch(changeType) {
+      case "initialload":
+        sessionObj = {
+          tracks: tracks,
+          roi: [],
+          locus: "chr19:1,038,997-1,066,572"
+        }
+        break
+      case "locuschange":
+        sessionObj = {
+          tracks: sessionJSON.tracks,
+          roi: sessionJSON.roi,
+          locus: browser.currentLoci()
+        }
+        break
+      case "updateuserdefinedroi":
+        sessionObj = {
+          tracks: sessionJSON.tracks,
+          roi: [{features: await browser.getUserDefinedROIs(), isUserDefined: true}],
+          locus: sessionJSON.locus
+        }
+        break
+      case "loadsession": 
+        sessionObj = {
+          tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
+          roi: [{features: await browser.getUserDefinedROIs(), isUserDefined: true}],
+          locus: browser.currentLoci()
+        }
+        break
+      case "trackremoved":
+        sessionObj = {
+          tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
+          roi: sessionJSON.roi,
+          locus: sessionJSON.locus
+        }
+        break
+      case "savesession":
+        sessionObj = {
+          tracks: sessionJSON.tracks,
+          roi: sessionJSON.roi,
+          locus: sessionJSON.locus
+        }
+      default: 
+        console.error("changeType is not an expected value, it is: ", changeType)
+    }
+  
+    return sessionObj
+  }
+
   const handleLoadFileClick = (jsonObj: Session) => {
     removeAndLoadTracks(jsonObj.tracks, browser);
+    if(jsonObj.hasOwnProperty('roi')) removeAndLoadROIs(jsonObj.roi, browser)
+    if(jsonObj.hasOwnProperty('locus')) browser.search(jsonObj.locus)
     onBrowserChange("loadsession")
   }
 
@@ -223,7 +253,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     <>
       <LoadSession handleLoadFileClick={handleLoadFileClick} />
       <SaveSession handleSave={handleSaveSession} />
-      <AddTracksButton browser={browser} onBrowserChange={onBrowserChange}/>
       <span style={{ width: "100%" }} id="genome-browser" />
     </>
   );
