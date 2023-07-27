@@ -20,7 +20,8 @@ import {
   removeTrackFromList,
   convertStringToTrackNames,
   selectTracksFromURLParams,
-  addDefaultFlank
+  addDefaultFlank,
+  createROIFromLocusRange
 } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
@@ -90,7 +91,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         if(queryParams.hasOwnProperty("tracks")) removeAndLoadTracks(queryParams.tracks, browser)
         if(queryParams.hasOwnProperty("locus")){ 
           browser.search(queryParams.locus)
-          
+          browser.loadROI(queryParams.roi)
         }
       }
       else {
@@ -212,7 +213,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     if(queryParams.has("tracks")) params.tracks = selectTracksFromURLParams(tracks, convertStringToTrackNames(queryParams.get("tracks")))
     if(queryParams.has("locus")){
       params.locus = addDefaultFlank(queryParams.get("locus"))
-      params.roi = queryParams.get("locus")
+      params.roi = createROIFromLocusRange(queryParams.get("locus"))
     }
     return params
   }

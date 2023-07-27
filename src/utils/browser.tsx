@@ -1,4 +1,4 @@
-import { Session, TrackBaseOptions, IGVTrackOptions } from "@browser-types/tracks";
+import { Session, TrackBaseOptions, IGVTrackOptions, ROISet, ROIFeature } from "@browser-types/tracks";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import { resolveTrackReader, getLoadedTrackIDs, getLoadedTracks } from "./tracks";
 import { get } from "lodash"
@@ -125,6 +125,18 @@ export const addDefaultFlank = (locus: string) => {
 
 }
 
-export const createROIFromLocusRange = (roiString: string): ROISet => {
-    
+export const createROIFromLocusRange = (roiString: string): ROISet[] => {
+     const [chr, range] = roiString.split(':')
+     const [start, end] = range.split('-')
+
+     const feature: ROIFeature = {
+      chr: chr,
+      start: parseFloat(start),
+      end: parseFloat(end)
+     }
+
+     return [{
+      features: [feature],
+      isUserDefined: true
+     }]
 }
