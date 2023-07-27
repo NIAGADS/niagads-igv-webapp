@@ -192,14 +192,14 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       case "updateuserdefinedroi":
         sessionObj = {
           tracks: sessionJSON.tracks,
-          roi: [{features: await browser.getUserDefinedROIs()}],
+          roi: [{features: await browser.getUserDefinedROIs(), isUserDefined: true}],
           locus: sessionJSON.locus
         }
         break
       case "loadsession": 
         sessionObj = {
           tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
-          roi: [{features: await browser.getUserDefinedROIs()}],
+          roi: [{features: await browser.getUserDefinedROIs(), isUserDefined: true}],
           locus: browser.currentLoci()
         }
         break
