@@ -49,5 +49,5 @@ export interface ROISet {
 export interface ROIFeature {
     chr: string,
     start: number,
-    end: number
+    end: number,
 }

@@ -9,3 +9,4 @@ export const NIAGADS_GENOMICSDB_URL = "https://www.niagads.org"
 export const FEATURE_INFO_BASE_URL = NIAGADS_GENOMICSDB_URL + "/app/record"
 export const FEATURE_SEARCH_ENDPOINT= (USE_PROXY ? "" : NIAGADS_GENOMICSDB_URL) + "/service/track/feature?id="
 
+export const ROI_COLOR = "rgba(136,135,135,0.125)"
