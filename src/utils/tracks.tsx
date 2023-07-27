@@ -54,10 +54,6 @@ export const removeAndLoadTracks = (tracks: TrackBaseOptions[], browser: any) =>
         loadTracks(tracks, browser);
   }
 
-export const onTrackRemoved = (id: string) => {
-    
-}
-
 export const removeTrackFromList = (tracks: TrackBaseOptions[], removedTrack: TrackBaseOptions): TrackBaseOptions[] => {
     for(let i = 0; i < tracks.length; i++) {
         if(tracks[i].id === removedTrack.id){

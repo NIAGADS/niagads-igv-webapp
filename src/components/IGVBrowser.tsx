@@ -24,9 +24,7 @@ import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
 import { useSessionStorage } from "usehooks-ts";
-import AddTracksButton from "./AddTracksButton";
 import { BrowserChangeEvent, ReferenceFrame } from "@browser-types/browserObjects";
-import { ROI_COLOR } from "@data/_constants";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -111,8 +109,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         // custom track popovers
         browser.on("trackclick", trackPopover);
 
-        // perform action in encapsulating component if track is removed
-        //callback does not get the updated value of sessionJSON so functional form of the setter is used
         browser.on("trackremoved", (track: any) => {
           onTrackRemoved && onTrackRemoved(track)
           onBrowserChange("trackremoved")
@@ -161,7 +157,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     setBrowserChange(changeType)
   }, [])
 
-  //rearrange
   const handleSaveSession = async () => {
     if (browserIsLoaded) {
       let sessionObj = await createSessionObj("savesession");
@@ -223,7 +218,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     return sessionObj
   }
 
-  //TODO: update to handle ROIs and locus
   const handleLoadFileClick = (jsonObj: Session) => {
     removeAndLoadTracks(jsonObj.tracks, browser);
     if(jsonObj.hasOwnProperty('roi')) removeAndLoadROIs(jsonObj.roi, browser)
@@ -235,7 +229,6 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     <>
       <LoadSession handleLoadFileClick={handleLoadFileClick} />
       <SaveSession handleSave={handleSaveSession} />
-      <AddTracksButton browser={browser} onBrowserChange={onBrowserChange}/>
       <span style={{ width: "100%" }} id="genome-browser" />
     </>
   );
