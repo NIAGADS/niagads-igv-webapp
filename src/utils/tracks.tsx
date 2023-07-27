@@ -72,7 +72,7 @@ export const selectTracksFromURLParams = (availableTracks: TrackBaseOptions[], U
     const selectedTracks = []
     for(let trackName of URLTracks) {
         for(let track of availableTracks){
-            if(track.name === trackName) selectedTracks.push(track)
+            if(track.id === trackName) selectedTracks.push(track)
         }
     }
     return selectedTracks

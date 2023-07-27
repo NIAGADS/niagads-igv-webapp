@@ -115,10 +115,10 @@ export const createLocusString = (referenceFrameList: ReferenceFrame[]): string 
 }
 
 export const addDefaultFlank = (locus: string) => {
-  let [chr, range] = locus.split(":", 1)
-  let [start, end] = range.split("-", 1)
+  let [chr, range] = locus.split(":")
+  let [start, end] = range.split("-")
 
-  let numStart = parseInt(start) + DEFAULT_FLANK
+  let numStart = parseInt(start) - DEFAULT_FLANK
   let numEnd = parseInt(end) + DEFAULT_FLANK
 
   return `${chr}:${numStart}-${numEnd}`

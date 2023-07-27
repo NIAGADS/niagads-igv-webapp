@@ -89,6 +89,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       }
       else if(Object.keys(queryParams).length !== 0) {
         if(queryParams.hasOwnProperty("tracks")) removeAndLoadTracks(queryParams.tracks, browser)
+        else removeAndLoadTracks(tracks, browser)
         if(queryParams.hasOwnProperty("locus")){ 
           browser.search(queryParams.locus)
           browser.loadROI(queryParams.roi)
