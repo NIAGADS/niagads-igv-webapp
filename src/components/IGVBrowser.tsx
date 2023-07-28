@@ -15,7 +15,7 @@ import {
   downloadObjectAsJson,
   removeTrackById,
   getLoadedTracks,
-  removeAndLoadTracks,
+  removeTracks,
   removeFunctionsInTracks,
   createLocusString,
   removeTrackFromList,
@@ -84,8 +84,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       const queryParams = getQueryParams()
       
       if(Object.keys(queryParams).length !== 0) {
-        if(queryParams.hasOwnProperty("tracks")) removeAndLoadTracks(queryParams.tracks, browser)
-        else removeAndLoadTracks(tracks, browser)
+        if(queryParams.hasOwnProperty("tracks")) loadTracks(queryParams.tracks, browser)
+        else loadTracks(tracks, browser)
         if(queryParams.hasOwnProperty("locus")){ 
           browser.search(queryParams.locus)
           browser.loadROI(queryParams.roi)
@@ -93,21 +93,17 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         onBrowserChange("loadfromqueryparams")
       }
       else if(sessionJSON != null) {
-        removeAndLoadTracks(sessionJSON.tracks, browser);
-        if(sessionJSON.hasOwnProperty("roi")) removeAndLoadROIs(sessionJSON.roi, browser);
+        loadTracks(sessionJSON.tracks, browser);
+        if(sessionJSON.hasOwnProperty("roi")) browser.loadROI(sessionJSON.roi)
         if(sessionJSON.hasOwnProperty("locus")) browser.search(sessionJSON.locus)
       }
       else {
-        removeAndLoadTracks(tracks, browser);
+        loadTracks(tracks, browser);
         onBrowserChange("initialload")
       }
     }
   }, [browserIsLoaded, memoOptions, tracks]);
 
-  const removeAndLoadROIs = (ROIs: ROISet[], browser: any) => {
-    browser.clearROIs()
-    browser.loadROI(ROIs)
-  }
   useLayoutEffect(() => {
     window.addEventListener("ERROR: Genome Browser - ", (event) => {
       console.log(event);
@@ -236,8 +232,12 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   }
 
   const handleLoadFileClick = (jsonObj: Session) => {
-    removeAndLoadTracks(jsonObj.tracks, browser);
-    if(jsonObj.hasOwnProperty('roi')) removeAndLoadROIs(jsonObj.roi, browser)
+    removeTracks(browser);
+    loadTracks(jsonObj.tracks, browser)
+    if(jsonObj.hasOwnProperty('roi')){
+      browser.clearROIs()
+      browser.loadROI()
+    } 
     if(jsonObj.hasOwnProperty('locus')) browser.search(jsonObj.locus)
     onBrowserChange("loadsession")
   }

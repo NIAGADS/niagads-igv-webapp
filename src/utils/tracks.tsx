@@ -41,7 +41,7 @@ export const resolveTrackReader = (trackType: string, config: any): any => {
     }
 };
 
-export const removeAndLoadTracks = (tracks: TrackBaseOptions[], browser: any) => {
+export const removeTracks = (browser: any) => {
     const loadedTracks = getLoadedTrackIDs(browser);
         // if any tracks are loaded, remove them
         if (Object.keys(loadedTracks).length !== 0) {
@@ -49,9 +49,6 @@ export const removeAndLoadTracks = (tracks: TrackBaseOptions[], browser: any) =>
             removeTrackById(id, browser);
           }
         }
-  
-        // load the new tracks
-        loadTracks(tracks, browser);
   }
 
 export const removeTrackFromList = (tracks: TrackBaseOptions[], removedTrack: TrackBaseOptions): TrackBaseOptions[] => {
