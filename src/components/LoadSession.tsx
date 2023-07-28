@@ -19,6 +19,7 @@ export default function LoadSessionButton(props: any) {
             }
             catch(error) {
                 console.error(error)
+                alert("There was an error in parsing the provided JSON file: " + error)
             }
         }
 
