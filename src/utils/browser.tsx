@@ -31,19 +31,7 @@ export const loadTracks = (tracks: TrackBaseOptions[], browser: any) => {
   }
 }
 
-export const getTracksForSession = (browser: any, availableTracks: TrackBaseOptions[]): TrackBaseOptions[] => {
-  const loadedTracks: string[] = getLoadedTrackIDs(browser)
-  const tracks: TrackBaseOptions[] = []
-  for(let trackID of loadedTracks){
-    for(let track of availableTracks){
-      if(trackID === track.id) tracks.push(track)
-    }
-  }
-
-  return tracks
-}
-
-export const removeFunctionsInTracks = (tracks: TrackBaseOptions[]): TrackBaseOptions[] => {
+export const cleanTracks = (tracks: TrackBaseOptions[]): TrackBaseOptions[] => {
   //remove sequence
   tracks = tracks.filter(track => (track.type !== "sequence"))
   
@@ -57,15 +45,6 @@ export const removeFunctionsInTracks = (tracks: TrackBaseOptions[]): TrackBaseOp
     }
   }
   return tracks
-}
-
-
-export const removeNonReferenceTracks = (tracks: TrackBaseOptions[], browser: any) => {
-  for(let track of tracks) {
-    if(track.id !== "REFSEQ_GENE" && track.id !== "ENSEMBL_GENE"){
-      browser.removeTrackByName(track.name)
-    }
-  }
 }
 
 export const createLocusString = (referenceFrameList: ReferenceFrame[]): string => {

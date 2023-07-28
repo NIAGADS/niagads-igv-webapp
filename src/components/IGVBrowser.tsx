@@ -16,7 +16,7 @@ import {
   removeTrackById,
   getLoadedTracks,
   removeTracks,
-  removeFunctionsInTracks,
+  cleanTracks,
   createLocusString,
   removeTrackFromList,
   convertStringToTrackNames,
@@ -206,14 +206,14 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       case "loadsession":
       case "loadfromqueryparams": 
         sessionObj = {
-          tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
+          tracks: cleanTracks(getLoadedTracks(browser)),
           roi: [{features: await browser.getUserDefinedROIs(), isUserDefined: true}],
           locus: browser.currentLoci()
         }
         break
       case "trackremoved":
         sessionObj = {
-          tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
+          tracks: cleanTracks(getLoadedTracks(browser)),
           roi: sessionJSON.roi,
           locus: sessionJSON.locus
         }
@@ -268,6 +268,10 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
         } 
       } 
     })
+  
+    //remove refereence object
+    tracks = tracks.filter(track => (track.id !== "reference"))
+
     return obj
   }
 

@@ -2,7 +2,7 @@ export const GENOME_BUILD = "GRCh38"
 export const USE_PROXY = true
 
 export const DEFAULT_FLANK = 1000
-export const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE"];
+export const ALWAYS_ON_TRACKS = ["ideogram", "ruler", "sequence", "ENSEMBL_GENE", "REFSEQ_GENE"];
 
 export const NIAGADS_GENOMICSDB_URL = "https://www.niagads.org"
     + (GENOME_BUILD.endsWith("38") ? "/genomics" : "/genomics37")
