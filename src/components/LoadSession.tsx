@@ -15,10 +15,11 @@ export default function LoadSessionButton(props: any) {
         reader.onload = (event: any) => {
             try{
                 const jsonObj = JSON.parse(event.target.result);
-                props.setSessionJSON(jsonObj);
+                props.handleLoadFileClick(jsonObj)
             }
             catch(error) {
                 console.error(error)
+                alert("There was an error in parsing the provided JSON file: " + error)
             }
         }
 

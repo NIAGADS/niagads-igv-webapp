@@ -32,8 +32,21 @@ export interface IGVTrackOptions extends TrackBaseOptions {
 export interface Session {
     tracks: TrackBaseOptions[]
 
-    //TODO: currently optional because functionality isn't built yet but will be required in the future
     reference?: any
-    roi?: any
+    roi?: ROISet[]
     locus?: any
+}
+
+export interface ROISet {
+    features: ROIFeature[],
+
+    name?: string,
+    color?: string,
+    isUserDefined?: boolean
+}
+
+export interface ROIFeature {
+    chr: string,
+    start: number,
+    end: number,
 }
