@@ -175,6 +175,7 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   const handleSaveSession = async () => {
     if (browserIsLoaded) {
       let sessionObj = await createSessionObj("savesession");
+      sessionObj = cleanSessionObj(sessionObj)
       downloadObjectAsJson(sessionObj, "NIAGADS_IGV_session");
     } else {
       alert("Wait until the browser is loaded before saving");
@@ -250,6 +251,24 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
       params.roi = createROIFromLocusRange(queryParams.get("locus"))
     }
     return params
+  }
+
+  const cleanSessionObj = (obj: Session) => {
+    //remove reader and metadata to prepare session for download
+    obj.tracks.map((track) => {
+      for(let property in track){
+        //@ts-ignore
+        if(property === "reader") delete track.reader
+        else if(property === "metadata"){
+          //@ts-ignore
+          let description = track.metadata.Description
+          //@ts-ignore
+          delete track.metadata
+          track.description = description
+        } 
+      } 
+    })
+    return obj
   }
 
   return (
