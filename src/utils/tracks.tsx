@@ -2,7 +2,7 @@ import get from "lodash.get";
 import { ALWAYS_ON_TRACKS } from "@data/_constants";
 import VariantServiceReader  from "@readers/VariantServiceReader"
 import GWASServiceReader from "@readers/GWASServiceReader"
-import { Session, TrackBaseOptions } from "@browser-types/tracks";
+import { ROISet, Session, TrackBaseOptions } from "@browser-types/tracks";
 import { loadTracks } from "./browser";
 
 export const getTrackID = (trackView: any) => {
@@ -62,3 +62,19 @@ export const removeTrackFromList = (tracks: TrackBaseOptions[], removedTrack: Tr
     }
     return tracks
 }
+
+export const convertStringToTrackNames = (trackString: string): string[] => {
+    let tracks = trackString.split(',')
+    return tracks
+}
+
+export const selectTracksFromURLParams = (availableTracks: TrackBaseOptions[], URLTracks: string[]): TrackBaseOptions[] => {
+    const selectedTracks = []
+    for(let trackName of URLTracks) {
+        for(let track of availableTracks){
+            if(track.id === trackName) selectedTracks.push(track)
+        }
+    }
+    return selectedTracks
+}
+

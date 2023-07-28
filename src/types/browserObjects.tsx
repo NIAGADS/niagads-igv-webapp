@@ -1,3 +1,5 @@
+import { ROISet, TrackBaseOptions } from "./tracks"
+
 export interface ReferenceFrame {
     chr: string,
     start: number,
@@ -15,4 +17,11 @@ export type BrowserChangeEvent =
 | "trackremoved"
 | "loadsession"
 | "savesession"
+| "loadfromqueryparams"
 | "none"
+
+export interface QueryParams {
+    tracks?: TrackBaseOptions[],
+    roi?: ROISet[],
+    locus?: string,
+}

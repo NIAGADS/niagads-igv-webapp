@@ -18,13 +18,17 @@ import {
   removeAndLoadTracks,
   removeFunctionsInTracks,
   createLocusString,
-  removeTrackFromList
+  removeTrackFromList,
+  convertStringToTrackNames,
+  selectTracksFromURLParams,
+  addDefaultFlank,
+  createROIFromLocusRange
 } from "@utils/index";
 import { decodeBedXY } from "@decoders/bedDecoder";
 import LoadSession from "./LoadSession";
 import SaveSession from "./SaveSession";
 import { useSessionStorage } from "usehooks-ts";
-import { BrowserChangeEvent, ReferenceFrame } from "@browser-types/browserObjects";
+import { BrowserChangeEvent, QueryParams, ReferenceFrame } from "@browser-types/browserObjects";
 
 export const DEFAULT_FLANK = 1000;
 
@@ -77,7 +81,18 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
   useEffect(() => {
     // setting initial session due to component load/reload
     if (browserIsLoaded && memoOptions && tracks) {
-      if(sessionJSON != null) {
+      const queryParams = getQueryParams()
+      
+      if(Object.keys(queryParams).length !== 0) {
+        if(queryParams.hasOwnProperty("tracks")) removeAndLoadTracks(queryParams.tracks, browser)
+        else removeAndLoadTracks(tracks, browser)
+        if(queryParams.hasOwnProperty("locus")){ 
+          browser.search(queryParams.locus)
+          browser.loadROI(queryParams.roi)
+        }
+        onBrowserChange("loadfromqueryparams")
+      }
+      else if(sessionJSON != null) {
         removeAndLoadTracks(sessionJSON.tracks, browser);
         if(sessionJSON.hasOwnProperty("roi")) removeAndLoadROIs(sessionJSON.roi, browser);
         if(sessionJSON.hasOwnProperty("locus")) browser.search(sessionJSON.locus)
@@ -191,7 +206,8 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
           locus: sessionJSON.locus
         }
         break
-      case "loadsession": 
+      case "loadsession":
+      case "loadfromqueryparams": 
         sessionObj = {
           tracks: removeFunctionsInTracks(getLoadedTracks(browser)),
           roi: [{features: await browser.getUserDefinedROIs(), isUserDefined: true}],
@@ -223,6 +239,17 @@ const IGVBrowser: React.FC<IGVBrowserProps> = ({
     if(jsonObj.hasOwnProperty('roi')) removeAndLoadROIs(jsonObj.roi, browser)
     if(jsonObj.hasOwnProperty('locus')) browser.search(jsonObj.locus)
     onBrowserChange("loadsession")
+  }
+
+  const getQueryParams = () => {
+    let params: QueryParams = {}
+    const queryParams = new URLSearchParams(window.location.search);
+    if(queryParams.has("tracks")) params.tracks = selectTracksFromURLParams(tracks, convertStringToTrackNames(queryParams.get("tracks")))
+    if(queryParams.has("locus")){
+      params.locus = addDefaultFlank(queryParams.get("locus"))
+      params.roi = createROIFromLocusRange(queryParams.get("locus"))
+    }
+    return params
   }
 
   return (

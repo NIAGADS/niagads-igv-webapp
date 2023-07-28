@@ -25,7 +25,7 @@ const EXPECTED_BED_FIELDS = [
 // make column name lower then comapare
 const P_VALUE_FIELDS = ["pvalue", "p-value", "pval", "p_value"]; //TODO: check nominal pvalue
 const GENE_SYMBOL_FIELDS = ["gene", "gene_name", "target_gene_symbol"];
-const GENE_ID_FIELDS = ["gene_id", "target_gene_id"];
+const GENE_ID_FIELDS = ["gene_id", "target_gene_id", "target"];
 
 export function decodeBedXY(tokens: any, header: any) {
   // Get X (number of standard BED fields) and Y (number of optional BED fields) out of format
@@ -155,6 +155,7 @@ function parseGeneIds(
     let index = ignoreCaseIndexOf(columnNames, field);
     if (index !== -1) {
       geneId = tokens[index];
+      geneId = geneId.replace(/\.\d+/, '') // remove the versioning in Ensembl Gene IDs
       feature.setAdditionalAttributes({ gene_id: geneId });
     }
   }
