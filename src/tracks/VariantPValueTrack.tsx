@@ -4,7 +4,6 @@
 import igv from "igv/dist/igv.esm";
 import { ManhattanColors } from "@tracks/color_scales"
 import { FEATURE_INFO_BASE_URL } from "@data/_constants";
-import { Generator } from "webpack";
 
 const DEFAULT_POPOVER_WINDOW = 100000000
 
