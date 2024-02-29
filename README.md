@@ -1,4 +1,4 @@
-Development environment for NIAGADS IGV Wrapper React Component
+Standalone webapp for NIAGADS customized IGV Genome Browser 
 
 ## Requirements
 
