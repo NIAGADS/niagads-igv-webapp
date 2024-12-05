@@ -15,10 +15,10 @@
         "@babel/preset-env": "^7.17.10",
         "@babel/preset-react": "^7.16.7",
         "@types/jquery": "^3.5.16",
+        "@types/lodash.find": "^4.6.7",
         "@types/lodash.get": "^4.4.7",
         "@types/lodash.merge": "^4.6.7",
         "@types/lodash.noop": "^3.0.7",
-        "@types/lodash.find": "^4.6.7",
         "@types/react-dom": "^18.2.4",
         "babel-loader": "^8.2.5",
         "html-webpack-plugin": "^5.5.0",
@@ -29,13 +29,16 @@
         "webpack-dev-server": "^4.9.0"
     },
     "dependencies": {
-        "igv": "https://github.com/NIAGADS/igv.js.git#NIAGADS",
+        "@types/lodash.isequal": "^4.5.6",
+        "igv": "https://github.com/NIAGADS/igv.js.git#NIAGADS-events",
         "jquery": "^3.7.0",
         "lodash.find": "^4.6.0",
         "lodash.get": "^4.4.2",
+        "lodash.isequal": "^4.5.0",
         "lodash.merge": "^4.6.2",
         "lodash.noop": "^3.0.1",
         "react": "^18.1.0",
-        "react-dom": "^18.1.0"
+        "react-dom": "^18.1.0",
+        "usehooks-ts": "^2.9.1"
     }
 }
