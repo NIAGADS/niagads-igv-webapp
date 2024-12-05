@@ -1,4 +1,4 @@
-import { FEATURE_INFO_BASE_URL } from "@data/_constants";
+import { FEATURE_INFO_BASE_URL } from "../common/_constants";
 
 const _geneSubFeaturePopoverData = (fields: string[], info: any, pData: any[]) => {
     // type
@@ -46,7 +46,7 @@ const _geneTrackPopoverData = (info: any) => {
     let pData: any = [];
 
     const featureType = info[fields.indexOf("type")].value.replace('_', ' ');
-    if (featureType === "gene" || featureType.endsWith("gene")) {  
+    if (featureType === "gene" || featureType.endsWith("gene")) {
         const geneSymbol = info[fields.indexOf("name")].value;
         pData.push({ name: "Feature Type:", value: featureType });
         pData.push({ name: "Name:", value: geneSymbol });
@@ -65,7 +65,7 @@ const _geneTrackPopoverData = (info: any) => {
         if (fields.includes("description")) {
             const product = info[fields.indexOf("description")].value.replace(regexp, "");
             pData.push({ name: "Product:", value: product });
-        }   
+        }
 
         const biotype = info[fields.indexOf("biotype")];
         if (biotype.hasOwnProperty("color")) {
@@ -99,26 +99,25 @@ const _geneTrackPopoverData = (info: any) => {
 };
 
 const formatPopoverData = (data: any) => {
-    for(let row of data) {
-        let value = null
-        if(row.hasOwnProperty('value')) value = row.value
-        else continue
-
-        if(!isNaN(value) && value !== null) {
-            // if the number is in scientific notation or greater than 1, round to two decimal places plus the exponent
-            if(value.toString().includes("e") || value > 1) {
-                if(value.toString().includes("e")) {
-                    const [number, exponent] = value.toString().split("e")
-                    value = parseFloat(number).toFixed(2) + "e" + exponent
-                } else {
-                    value = parseFloat(value).toFixed(2)
+    for (const row of data) {
+        if (row.hasOwnProperty('value')) {
+            let value = row.value
+            if (value !== null && !isNaN(value)) {
+                // if the number is in scientific notation or greater than 1, round to two decimal places plus the exponent
+                if (value.toString().includes("e") || value > 1) {
+                    if (value.toString().includes("e")) {
+                        const [number, exponent] = value.toString().split("e")
+                        value = parseFloat(number).toFixed(2) + "e" + exponent
+                    } else {
+                        value = parseFloat(value).toFixed(2)
+                    }
                 }
+                //If the number is more than 5 digits, round to 5.
+                else if (value.toString().length > 6) {
+                    value = parseFloat(value).toFixed(5)
+                }
+                row.value = value
             }
-            //If the number is more than 5 digits, round to 5.
-            else if(value.toString().length > 6) {
-                value = parseFloat(value).toFixed(5)
-            }
-            row.value = value
         }
     }
     return data
@@ -140,7 +139,7 @@ const trackPopover = (track: any, popoverData: any) => {
             markup += "</table>" + " <hr> " + tableStartMarkup;
         } else {
             let value = item.html ? item.html : item.value ? item.value : item.toString();
-            let color = item.color ? item.color : null;
+            const color = item.color ? item.color : null;
 
             if (color !== null) {
                 value =
@@ -159,11 +158,11 @@ const trackPopover = (track: any, popoverData: any) => {
                 markup += `<tr ${hoverCSS}><td style='padding-left: 5px'>` + label + "</td><td style='padding-left: 5px'>" + value + "</td></tr>";
             } else {
                 // not a name/value pair
-                if(value === "<hr/>") {
+                if (value === "<hr/>") {
                     value = "<hr color='#7F7F7F' noshade size='1px'/>"
                     markup += "<tr><td style='padding: 0'>" + value + "</td><td style='padding: 0'>" + value + "</td></tr>";
                 }
-                else{
+                else {
                     markup += "<tr><td>" + value + "</td><td>" + value + "</td></tr>";
                 }
             }

@@ -61,9 +61,9 @@ const ManhattanColors = {
 }
 
 //  aliasing
-for (let key of Object.keys(ManhattanColors)) {
-    const altName = "chr" + key
-    //@ts-ignore
+for (const key of Object.keys(ManhattanColors)) {
+    const altName: string = "chr" + key
+    //@ts-expect-error: no way to type this
     ManhattanColors[altName] = ManhattanColors[key]
 }
 
@@ -71,18 +71,19 @@ for (let key of Object.keys(ManhattanColors)) {
 for(let a = 1; a <= 48; a++) {
     if(a === 10) continue   // Don't overide "X"
     const roman = romanize(a)
-    // @ts-ignore
+    // @ts-expect-error: no way to type this
     ManhattanColors[roman] = ManhattanColors[a.toString()]
 }
 
 
 function romanize (num: any) {
     if (!+num) return false;
-    var digits = String(+num).split('');
-    var key = ['','C','CC','CCC','CD','D','DC','DCC','DCCC','CM',
+    const digits = String(+num).split('');
+    const key = ['','C','CC','CCC','CD','D','DC','DCC','DCCC','CM',
         '','X','XX','XXX','XL','L','LX','LXX','LXXX','XC',
         '','I','II','III','IV','V','VI','VII','VIII','IX'];
-    var roman = '', i = 3;
+    let roman = '', i = 3;
+    //@ts-expect-error: who knows
     while (i--) roman = (key[+digits.pop() + (i * 10)] || '') + roman;
     return Array(+digits.join('') + 1).join('M') + roman;
 }

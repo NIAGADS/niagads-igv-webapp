@@ -2,9 +2,8 @@ import {
   ignoreCaseIndexOf,
   isSimpleType,
   capitalize,
-  numberFormatter,
-  snakeToProperCase,
-} from "@utils/index";
+  numberFormatter
+} from "../utils";
 import igv from "igv/dist/igv.esm";
 
 const EXPECTED_BED_FIELDS = [
@@ -29,7 +28,7 @@ const GENE_ID_FIELDS = ["gene_id", "target_gene_id", "target"];
 
 export function decodeBedXY(tokens: any, header: any) {
   // Get X (number of standard BED fields) and Y (number of optional BED fields) out of format
-  let match = header.format.match(/bed(\d{1,2})\+(\d+)/);
+  const match = header.format.match(/bed(\d{1,2})\+(\d+)/);
   const X = parseInt(match[1]);
   const Y = parseInt(match[2]);
 
@@ -65,8 +64,8 @@ export function decodeBedXY(tokens: any, header: any) {
 }
 
 function extractPopupData(genomeId: any) {
-  //@ts-ignore
-  const feature: BedXYFeature = this;
+  //@ts-expect-error: using `this` as local variable
+  const feature: BedXYFeature = this; // FIXME: investigate ts error
 
   const filteredProperties = new Set([
     "row",
@@ -81,22 +80,22 @@ function extractPopupData(genomeId: any) {
   ]);
   const data = [];
 
-  for (let property in feature) {
+  for (const property in feature) {
     if (
       feature.hasOwnProperty(property) &&
       !filteredProperties.has(property) &&
       isSimpleType(feature[property])
     ) {
-      let value = feature[property];
+      const value = feature[property];
       data.push({ name: capitalize(property), value: value });
       //removed alleles code
     }
     //If it's the info object
     else if (feature.hasOwnProperty(property) && property === "info") {
       //iterate over info and add it to data
-      for (let infoProp in feature[property]) {
-        let value = feature[property][infoProp];
-        let name = formatInfoKey(infoProp);
+      for (const infoProp in feature[property]) {
+        const value = feature[property][infoProp];
+        const name = formatInfoKey(infoProp);
         if (value) data.push({ name: name, value: value });
       }
     }
@@ -144,15 +143,15 @@ function parseGeneIds(
 ) {
   let geneSymbol = null;
   let geneId = null;
-  for (let field of GENE_SYMBOL_FIELDS) {
-    let index = ignoreCaseIndexOf(columnNames, field);
+  for (const field of GENE_SYMBOL_FIELDS) {
+    const index = ignoreCaseIndexOf(columnNames, field);
     if (index !== -1) {
       geneSymbol = tokens[index];
       feature.setAdditionalAttributes({ gene_symbol: geneSymbol });
     }
   }
-  for (let field of GENE_ID_FIELDS) {
-    let index = ignoreCaseIndexOf(columnNames, field);
+  for (const field of GENE_ID_FIELDS) {
+    const index = ignoreCaseIndexOf(columnNames, field);
     if (index !== -1) {
       geneId = tokens[index];
       geneId = geneId.replace(/\.\d+/, '') // remove the versioning in Ensembl Gene IDs
@@ -170,7 +169,7 @@ function parseGeneIds(
 function parseGeneInfo(feature: BedXYFeature) {
   let IDStatus = false;
   let symbolStatus = false;
-  for (let field in feature.info) {
+  for (const field in feature.info) {
     if (
       field === "gene" ||
       field === "gene_name" ||
@@ -186,8 +185,7 @@ function parseGeneInfo(feature: BedXYFeature) {
   if (!IDStatus && symbolStatus) {
     //if there is a symbol but no id, change the symbol name to id
     //make the symbol name field null
-    //gene id becomes gene
-    //@ts-ignore
+    //gene id becomes gene    
     feature.info.gene = feature.info.gene_symbol;
     feature.info.gene_symbol = null;
   }
@@ -218,10 +216,10 @@ function parseBedToken(field: string, token: string) {
 function parseStandardFields(feature: BedXYFeature, X: number, tokens: any) {
   // building an object { EXPECTED_FIELDS[index]: token[index]}
   try {
-    let attributes: any = {};
+    const attributes: any = {};
     for (let index = 3; index < X; index++) {
-      let field: string = EXPECTED_BED_FIELDS[index];
-      let value = parseBedToken(field, tokens[index]);
+      const field: string = EXPECTED_BED_FIELDS[index];
+      const value = parseBedToken(field, tokens[index]);
       if (value === null) continue;
       if (typeof value === "number" && isNaN(value)) {
         continue;
@@ -245,13 +243,13 @@ function parseOptionalFields(
   columns: any
 ) {
   //go through tokens and perform minimal parsing add optional columns to feature.info
-  let optionalFields: any = {};
+  const optionalFields: any = {};
   for (let i = X; i < columns.length; i++) {
     let optField = tokens[i];
     //check to see if the feature is a number in a string and convert it
     if (!isNaN(optField) && typeof optField !== "number") {
-      let num = parseFloat(optField);
-      Number.isInteger(num) ? parseInt(optField) : (optField = num);
+      const num = parseFloat(optField);
+      if (Number.isInteger(num)) {parseInt(optField)} else {(optField = num);}
     }
     if (optField === ".") optField = null;
 
@@ -267,11 +265,11 @@ function parsePValues(
   tokens: any,
   columnNames: string[]
 ) {
-  for (let field of P_VALUE_FIELDS) {
-    let pIndex = ignoreCaseIndexOf(columnNames, field);
+  for (const field of P_VALUE_FIELDS) {
+    const pIndex = ignoreCaseIndexOf(columnNames, field);
     if (pIndex !== -1) {
-      let pValue = parseFloat(tokens[pIndex]);
-      let neg_log10_pvalue = -1 * Math.log10(pValue);
+      const pValue = parseFloat(tokens[pIndex]);
+      const neg_log10_pvalue = -1 * Math.log10(pValue);
 
       feature.setAdditionalAttributes({
         pvalue: pValue,

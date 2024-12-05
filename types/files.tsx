@@ -1,4 +1,4 @@
-import { VariantConsequence } from "@browser-types/annotations"
+import { VariantConsequence } from "./annotations"
 
 export interface VCFInfo {
     location: string;

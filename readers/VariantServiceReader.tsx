@@ -1,5 +1,5 @@
 import igv from "igv/dist/igv.esm";
-import { VCFInfo } from "@browser-types/files" 
+import { VCFInfo } from "../types/files" 
 
 interface VariantServiceResponse {
    chrom: string;
