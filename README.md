@@ -1,3 +1,5 @@
+** ARCHIVED -- planned integration into NIAGADS/niagads-viz-js **
+
 Standalone webapp for NIAGADS customized IGV Genome Browser 
 
 ## Requirements
