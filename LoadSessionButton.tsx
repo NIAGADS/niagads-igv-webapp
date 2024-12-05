@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useRef } from "react"
+import React, { useRef } from "react";
 
 export default function LoadSessionButton(props: any) {
     const fileRef = useRef(null)
